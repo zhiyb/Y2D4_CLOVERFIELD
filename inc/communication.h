@@ -1,8 +1,8 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-// UART baudrate
-#define BAUD	
+// UART baudrate (750,000 bps)
+#define BAUD		(F_CPU / 8 / (1 + 1))
 
 // Response
 #define COM_ACK		0
