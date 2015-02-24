@@ -31,7 +31,7 @@ start:
 	tft.clean();
 	tft.setZoom(1);
 	puts("*** IlMatto1 testing ***");
-	puts("PING for other IlMatto2");
+	puts("PING for IlMatto2");
 	char c;
 
 ping:
