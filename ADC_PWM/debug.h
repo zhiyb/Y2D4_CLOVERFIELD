@@ -14,10 +14,10 @@
 #define DEBUG_BAUD  9600
 
 void init_tone(void);
-int uputchar0(char c, FILE *stream);
+int uputchar1(char c, FILE *stream);
 char get_ch();
-int ugetchar0(FILE *stream);
-void init_debug_uart0(void);
+int ugetchar1(FILE *stream);
+void init_debug_uart1(void);
 void init_adc(void);
 void channel_adc(uint8_t n);
 void adc_interrupt_enable(void);

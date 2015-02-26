@@ -1,39 +1,54 @@
 #include "debug.h"
 
-int uputchar0(char c, FILE *stream)
+int uputchar1(char c, FILE *stream)
 {
-	if (c == '\n') uputchar0('\r', stream);
-	while (!(UCSR0A & _BV(UDRE0)));
-	UDR0 = c;
+	if (c == '\n') uputchar1('\r', stream);
+	while (!(UCSR1A & _BV(UDRE1)));
+	UDR1 = c;
 	return c;
 }
 
-int ugetchar0(FILE *stream)
+int ugetchar1(FILE *stream)
 {
-	while(!(UCSR0A & _BV(RXC0)));
-	return UDR0;
+	while(!(UCSR1A & _BV(RXC1)));
+	return UDR1;
 }
 char get_ch(void)
 {
-	while(!(UCSR0A & _BV(RXC0)));
-	return UDR0;
+	while(!(UCSR1A & _BV(RXC1)));
+	return UDR1;
 }
-void init_debug_uart0(void)
+void init_debug_uart1(void)
 {
-	/* Configure UART0 baud rate, one start bit, 8-bit, no parity and one stop bit */
-	UBRR0H = (F_CPU/(DEBUG_BAUD*16L)-1) >> 8;
-	UBRR0L = (F_CPU/(DEBUG_BAUD*16L)-1);
-	UCSR0B = _BV(RXEN0) | _BV(TXEN0);
-	UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
+UBRR1 = 0;
+/* Setting the XCKn port pin as output, enables master mode. */
+DDRD |= _BV(4);
+/* Set MSPI mode of operation and SPI data mode 0. */
+UCSR1C = (1<<UMSEL11)|(1<<UMSEL10)|(1<<UCPHA1)|(0<<UCPOL1);
+/* Enable receiver and transmitter. */
+UCSR1B = (1<<RXEN1)|(1<<TXEN1);
+/* Set baud rate. */
+/* IMPORTANT: The Baud Rate must be set after the transmitter is enabled
+*/
+UBRR1 = DEBUG_BAUD;
 
-	/* Setup new streams for input and output */
-	static FILE uout = FDEV_SETUP_STREAM(uputchar0, NULL, _FDEV_SETUP_WRITE);
-	static FILE uin = FDEV_SETUP_STREAM(NULL, ugetchar0, _FDEV_SETUP_READ);
 
-	/* Redirect all standard streams to UART0 */
+
+	/* Configure UART0 baud rate, one start bit, 8-bit, no parity and one stop bit 
+	UBRR1H = (F_CPU/(DEBUG_BAUD*16L)-1) >> 8;
+	UBRR1L = (F_CPU/(DEBUG_BAUD*16L)-1);
+	UCSR1B = _BV(RXEN1) | _BV(TXEN1);
+	UCSR1C = _BV(UCSZ10) | _BV(UCSZ11);
+	*/
+	/* Setup new streams for input and output 
+	static FILE uout = FDEV_SETUP_STREAM(uputchar1, NULL, _FDEV_SETUP_WRITE);
+	static FILE uin = FDEV_SETUP_STREAM(NULL, ugetchar1, _FDEV_SETUP_READ);
+	*/
+	/* Redirect all standard streams to UART0 
 	stdout = &uout;
 	stderr = &uout;
 	stdin = &uin;
+	*/
 }
 void init_adc(void)
 {
