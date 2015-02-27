@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= DAC
-SRC	= dac.c test.c
+SRC	= dac.c main.c
 LIB	= 
 VERSION	= 0.0.1
 
@@ -19,4 +19,4 @@ LFUSE	= 0xE7
 
 LOG	= ~/.make_avr.log
 
-include Makefile.in
+include ../Makefile.in
