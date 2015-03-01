@@ -1,7 +1,7 @@
-LIBNAME		= liblist
-LIBSRC		= landscapelist.cpp portraitlist.cpp
+LIBNAME		= libtft-cpp
+LIBSRC		= ascii.c tft.cpp
 
-LIB		= tft-cpp
+LIB		= 
 
 MCU_TARGET	?= atmega644p
 MCU_FREQ	?= 12000000 
