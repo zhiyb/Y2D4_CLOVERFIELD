@@ -1,8 +1,8 @@
 # Modified by zhiyb (Yubo Zhi)
 
-PRG	= IlMatto1
-SRC	= main.cpp uart0.cpp
-LIB	= tft-cpp
+PRG	= ADC_PWM
+SRC	= USART_DAC.c debug.c
+LIB	= 
 LIBDIR	= ../lib
 VERSION	= 0.0.1
 
@@ -10,9 +10,10 @@ PRGER	= usbasp
 MCU_TARGET	= atmega644p
 OPTIMIZE	= -Os
 
-DEFS	+= -DF_CPU=12000000
+DEFS	+= -DF_CPU=12000000 -DDEBUG
+DEFS	+= -DTFT_VERTICALSCROLLING
 LIBS	+=
-INCS	+= -I../inc
+INCS	+=
 
 EFUSE	= 0xFF
 HFUSE	= 0x9C
