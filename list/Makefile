@@ -2,14 +2,17 @@
 
 PRG	= list
 SRC	= main.cpp menu.cpp
-LIB	= tft-cpp list
+LIB	= tft-cpp list rTouch common
+LIBDIR	= ../lib
 VERSION	= 0.0.1
 
 PRGER	= usbasp
 MCU_TARGET	= atmega644p
 OPTIMIZE	= -Os
 
-DEFS	+= -DF_CPU=12000000 -DNO_CHECK
+DEFS	+= -DF_CPU=12000000
+DEFS	+= -DTFT_VERTICALSCROLLING
+DEFS	+= -DRTOUCH_SWAPXY
 LIBS	+=
 INCS	+=
 
@@ -19,4 +22,4 @@ LFUSE	= 0xE7
 
 LOG	= ~/.make_avr.log
 
-include Makefile.in
+include ../Makefile.in
