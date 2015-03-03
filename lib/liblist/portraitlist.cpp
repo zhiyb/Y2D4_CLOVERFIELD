@@ -1,3 +1,8 @@
+/*
+ * Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
+#include <colours.h>
 #include "portraitlist.h"
 
 #define ZOOM		2
@@ -9,6 +14,7 @@
 #define ITEM_NAME_X	16
 #define ITEM_NAME_Y	4
 #define ITEM_HEIGHT	(FONT_HEIGHT * ZOOM + ITEM_NAME_Y * 2)
+#define ITEM_EMPTY	"** EMPTY **"
 
 #define DEF_TOP_AREA	(ITEM_HEIGHT * 2)
 #define DEF_BOTTOM_AREA	(ITEM_HEIGHT * 1)
@@ -29,7 +35,8 @@ void PortraitList::display(listItem *item)
 			return;
 	} else {
 		setCurrentItem(item);
-		max = countItems() * ITEM_HEIGHT;
+		cnt = countItems();
+		max = count() * ITEM_HEIGHT;
 		if (max > SCROLL_AREA)
 			max -= SCROLL_AREA;
 		else
@@ -79,7 +86,12 @@ disp:
 	tft->setBackground(c[index % (sizeof(c) / sizeof(c[1]))]);
 	tft->rectangle(0, ys, tft->width(), ITEM_HEIGHT, tft->background());
 	tft->setX(ITEM_NAME_X);
-	*tft << (item ? item->name : "** EMPTY **");
+	if (item)
+		tft->putString(item->name, true);
+#ifdef ITEM_EMPTY
+	else
+		tft->putString(PSTR(ITEM_EMPTY), true);
+#endif
 }
 
 void PortraitList::displayItems(const listItem **items, uint16_t index, uint16_t last) const
@@ -132,8 +144,10 @@ void PortraitList::scrollDown(uint16_t s)
 	tft->setBottomMask(tft->vsMaximum() - tft->bottomEdge());
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
 	const listItem **items = curItem->items;
-	for (uint16_t i = 0; i < index && *items != 0; i++)
-		items++;
+	if (count() <= index)
+		items += count();
+	else
+		items += index;
 	displayItems(items, index);
 }
 
@@ -147,9 +161,65 @@ void PortraitList::scrollUp(uint16_t s)
 	tft->setTopMask(tft->topEdge());
 	tft->setBottomMask(tft->vsMaximum() - (s > tft->vsHeight() ? tft->bottomEdge() : tft->topEdge() + s));
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
-	uint16_t first = scroll() / ITEM_HEIGHT;
+	uint16_t first = itemAt(scroll(), 0);
+	displayItems(itemsAt(first), first, last);
+}
+
+const listItem **PortraitList::itemsAt(const uint16_t index)
+{
 	const listItem **items = curItem->items;
-	for (uint16_t i = 0; i < first && *items != 0; i++)
-		items++;
-	displayItems(items, first, last);
+	if (count() <= index)
+		items += count();
+	else
+		items += index;
+	return items;
+}
+
+uint16_t PortraitList::itemAt(uint16_t s, uint16_t x) const
+{
+	uint16_t index = s / ITEM_HEIGHT;
+	return index;
+}
+
+void PortraitList::clickOn(uint16_t x, uint16_t y)
+{
+	if (y < tft->topEdge() || y >= tft->bottomEdge())
+		return;
+	activate(itemAt(scroll() + y - tft->topEdge(), x));
+	return;
+}
+
+void PortraitList::activate(uint16_t index)
+{
+	const listItem *item = *itemsAt(index);
+	if (item->func)
+		item->func();
+}
+
+void PortraitList::pool(rTouch *touch)
+{
+	rTouch::coord_t pos = touch->position();
+	switch(touch->status()) {
+	case rTouch::Pressed:
+		pressed = true;
+		break;
+	case rTouch::Moved:
+		pressed = false;
+		if (prev.x > 0 && (int16_t)scroll() - pos.y + prev.y >= 0)
+			setScroll((int16_t)scroll() - pos.y + prev.y);
+		break;
+	case rTouch::Idle:
+		if (pressed)
+			clickOn(pos.x, pos.y);
+		pressed = false;
+		break;
+	}
+#ifdef DEBUG
+	using namespace colours::b16;
+	tft->rectangle(0, tft->topEdge() - 1, tft->width(), 1, White);
+	tft->rectangle(0, tft->bottomEdge(), tft->width(), 1, White);
+	tft->rectangle(0, tft->bottomEdge() - 1, tft->width(), 1, Black);
+#endif
+	prev.x = pos.x;
+	prev.y = pos.y;
 }

@@ -1,13 +1,18 @@
+/*
+ * Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <util/delay.h>
 #include <tft.h>
+#include <rgbconv.h>
 #include <rtouch.h>
 #include <eemem.h>
 #include <adc.h>
 
-//#define AUTO_COLOUR
+#define AUTO_COLOUR
 
 tft_t tft;
 rTouch touch(&tft);
@@ -37,9 +42,10 @@ int main(void)
 	init();
 
 start:
+	tft.setOrient(tft.Portrait);
 	tft.clean();
 	tft.setZoom(1);
-	puts("*** Touch ***");
+	puts_P(PSTR("*** Touch ***"));
 
 #ifdef AUTO_COLOUR
 	bool pressed = false;

@@ -1,7 +1,10 @@
-#include "landscapelist.h"
+/*
+ * Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include <rgbconv.h>
 #include <colours.h>
-#include <util/delay.h>
+#include "landscapelist.h"
 
 #define ZOOM		2
 #define TOP_AREA	(tft->topFixedArea())
@@ -117,10 +120,10 @@ disp:
 	tft->rectangle(xs, ys, ITEM_WIDTH, ITEM_HEIGHT, tft->background());
 	tft->setY(ys + ITEM_NAME_Y);
 	if (item)
-		*tft << item->name;
+		tft->putString(item->name, true);
 #ifdef ITEM_EMPTY
 	else
-		*tft << ITEM_EMPTY;
+		tft->putString(PSTR(ITEM_EMPTY), true);
 #endif
 }
 
