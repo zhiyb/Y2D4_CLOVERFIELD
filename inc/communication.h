@@ -3,6 +3,8 @@
 
 // UART baudrate (750,000 bps)
 #define BAUD		(F_CPU / 8 / (1 + 1))
+// UART data buffer size
+#define BUFFER_SIZE	64
 
 // Response
 #define COM_ACK		0
@@ -24,7 +26,7 @@
 #define COM_W_SOUND	101
 // Stop sending & receiving sound data, no data, response {COM_ACK}
 #define COM_W_SOUND_END	102
-// Send data to other end, data {Length(2 bytes), Data}, response {COM_ACK}
+// Send data to other end, data {Length(1 bytes), Data}, response {COM_ACK}
 #define COM_W_SEND	103
 
 #endif
