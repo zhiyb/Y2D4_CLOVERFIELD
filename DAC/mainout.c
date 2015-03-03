@@ -10,6 +10,7 @@ int main(void)
 	init_debug_uart0();
 	init_adc(); 
 	adc_start();
+	sei();
 	char ch;
 	while(1){
 		ch = get_ch();
