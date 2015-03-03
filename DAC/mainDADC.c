@@ -1,6 +1,7 @@
 #include <util/delay.h>
 #include "dac.h"
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "debug.h"
 #include <ctype.h>
 
@@ -11,6 +12,7 @@ int main(void)
 	//init_debug_uart0();
 	initi_ADC(); 
 	adc_start();
+	sei();
 	//char ch;
 	while(1){
 		//ch = get_ch();

@@ -1,6 +1,7 @@
 #include <util/delay.h>
 #include "dac.h"
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "debug.h"
 #include <ctype.h>
 
