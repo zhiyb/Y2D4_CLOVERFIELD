@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= IlMatto1
-SRC	= main.cpp uart0.cpp
+SRC	= main.cpp uart0.c
 LIB	= tft-cpp
 LIBDIR	= ../lib
 VERSION	= 0.0.1

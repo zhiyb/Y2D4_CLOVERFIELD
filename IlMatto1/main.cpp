@@ -1,6 +1,7 @@
 #include <avr/io.h>
-#include <stdio.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdio.h>
 #include <communication.h>
 #include "tft.h"
 #include "uart0.h"
@@ -13,7 +14,7 @@ void init(void)
 {
 	DDRB |= 0x80;			// LED
 	PORTB |= 0x80;
-	u0 = uart0::init();
+	uart0_init();
 	tft.init();
 	tft.setOrient(tft.Portrait);
 	tft.setForeground(0x667F);
@@ -26,24 +27,24 @@ void init(void)
 int main(void)
 {
 	init();
+	sei();
 
 start:
 	tft.clean();
 	tft.setZoom(1);
 	puts("*** IlMatto1 testing ***");
+	struct package_t *pkg;
+
 	puts("PING for IlMatto2");
-	char c;
+	while (!(pkg = uart0_txPackage()));
+	pkg->command = COM_PING;
+	pkg->length = 0;
+	pkg->valid++;
+	uart0_send();
+	while (uart0_txStatus() != UART0_TX_IDLE);
+	puts("Valid response received!");
 
-ping:
-	do {
-		uart0::putch(COM_PING);
-		uart0::poolSending();
-		_delay_ms(10);
-	} while ((c = uart0::getchNonBlocking()) == -1);
-	if (c != COM_ACK)
-		printf("Unknown: %u\n", c);
-	goto ping;
-
+#if 0
 	puts("Wakeup wireless module");
 	uart0::putch(COM_WAKEUP);
 	if ((c = uart0::getch()) != COM_ACK)
@@ -69,6 +70,7 @@ ping:
 		printf("Unknown: %u\n", c);
 
 	puts("Finished");
+#endif
 
 loop:
 	goto loop;
