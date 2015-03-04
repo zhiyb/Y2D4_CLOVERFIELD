@@ -14,30 +14,35 @@
 
 #define ITEM_SPACE	8
 #define ITEM_NAME_X	(ITEM_IMAGE_X + ITEM_IMAGE_SIZE + ITEM_SPACE)
-#define ITEM_NAME_Y	6
+#define ITEM_NAME_Y	8
 #define ITEM_IMAGE_X	ITEM_SPACE
 #define ITEM_HEIGHT	(FONT_HEIGHT * ZOOM + ITEM_NAME_Y * 2)
-#define ITEM_EMPTY	"** EMPTY **"
+//#define ITEM_EMPTY	"** EMPTY **"
 
 #define DEF_TOP_AREA	(ITEM_HEIGHT * 1)
 #define DEF_BOTTOM_AREA	(ITEM_HEIGHT * 1)
 
 using namespace colours::b16;
 
+void PortraitList::setRootItem(listItem *item)
+{
+	setCurrentItem(item);
+	stackSize = 0;
+}
+
 void PortraitList::refresh(void)
 {
 	tft->setBackground(Black);
-	tft->clean();
 	tft->setZoom(ZOOM);
+	tft->clean();
 	display();
 }
 
-void PortraitList::display(listItem *item)
+void PortraitList::display(const listItem *item)
 {
 	tft->setVerticalScrollingArea(DEF_TOP_AREA, DEF_BOTTOM_AREA);
 	if (!item) {
-		item = currentItem();
-		if (!item)
+		if (!(item = currentItem()))
 			return;
 	} else {
 		setCurrentItem(item);
@@ -89,7 +94,10 @@ void PortraitList::displayItem(const listItem *item, const uint16_t index) const
 
 	static uint16_t c[] = {Red, Green, Blue, Yellow, Cyan, Magenta};
 disp:
-	tft->setBackground(c[index % (sizeof(c) / sizeof(c[1]))]);
+	if (index == (uint16_t)-1)
+		tft->setBackground(White);
+	else
+		tft->setBackground(c[index % (sizeof(c) / sizeof(c[1]))]);
 	tft->rectangle(0, ys, tft->width(), ITEM_HEIGHT, tft->background());
 	tft->setX(ITEM_NAME_X);
 	if (item) {
@@ -132,23 +140,23 @@ void PortraitList::scrollTo(const uint16_t s)
 		scr = s;
 }
 
-void PortraitList::setScroll(uint16_t s)
+bool PortraitList::setScroll(uint16_t s)
 {
 	if (s == scroll() || (int16_t)s < 0)
-		return;
+		return false;
 	else if (s > scroll())
-		scrollDown(s - scroll());
+		return scrollDown(s - scroll());
 	else
-		scrollUp(scroll() - s);
+		return scrollUp(scroll() - s);
 }
 
-void PortraitList::scrollDown(uint16_t s)
+bool PortraitList::scrollDown(uint16_t s)
 {
 	uint16_t index = itemAt(scroll() + SCROLL_AREA - 1, 0);
 	uint16_t scrbak = scroll();
 	scrollTo(scroll() + s);
 	if ((s = scroll() - scrbak) == 0)
-		return;
+		return false;
 	tft->setTopMask(s > tft->vsHeight() ? tft->topEdge() : tft->bottomEdge() - s);
 	tft->setBottomMask(tft->vsMaximum() - tft->bottomEdge());
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
@@ -158,23 +166,25 @@ void PortraitList::scrollDown(uint16_t s)
 	else
 		items += index;
 	displayItems(items, index);
+	return true;
 }
 
-void PortraitList::scrollUp(uint16_t s)
+bool PortraitList::scrollUp(uint16_t s)
 {
 	uint16_t last = itemAt(scroll(), 0) + 1;
 	uint16_t scrbak = scroll();
 	scrollTo(scroll() - s);
 	if ((s = scrbak - scroll()) == 0)
-		return;
+		return false;
 	tft->setTopMask(tft->topEdge());
 	tft->setBottomMask(tft->vsMaximum() - (s > tft->vsHeight() ? tft->bottomEdge() : tft->topEdge() + s));
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
 	uint16_t first = itemAt(scroll(), 0);
 	displayItems(itemsAt(first), first, last);
+	return true;
 }
 
-const listItem **PortraitList::itemsAt(const uint16_t index)
+const listItem **PortraitList::itemsAt(const uint16_t index) const
 {
 	const listItem **items = curItem->items;
 	if (count() <= index)
@@ -190,10 +200,21 @@ uint16_t PortraitList::itemAt(uint16_t s, uint16_t x) const
 	return index;
 }
 
+void PortraitList::toUpperLevel(void)
+{
+	if (!stackSize)
+		return;
+	display(stack[--stackSize]);
+}
+
 void PortraitList::clickOn(uint16_t x, uint16_t y)
 {
-	if (y < tft->topEdge() || y >= tft->bottomEdge())
+	if (y >= tft->bottomEdge())
 		return;
+	if (y < tft->topEdge()) {
+		toUpperLevel();
+		return;
+	}
 	activate(itemAt(scroll() + y - tft->topEdge(), x));
 	return;
 }
@@ -201,8 +222,16 @@ void PortraitList::clickOn(uint16_t x, uint16_t y)
 void PortraitList::activate(uint16_t index)
 {
 	const listItem *item = *itemsAt(index);
+	if (!item)
+		return;
 	if (item->func)
-		item->func();
+		if (item->func())
+			refresh();
+	if (item->items) {
+		stack[stackSize++] = currentItem();
+		display(item);
+		return;
+	}
 }
 
 void PortraitList::pool(rTouch *touch)
