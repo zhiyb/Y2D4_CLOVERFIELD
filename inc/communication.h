@@ -1,6 +1,8 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
+#include <inttypes.h>
+
 // UART baudrate (750,000 bps)
 #define BAUD		(F_CPU / 8 / (1 + 1))
 // UART data buffer size
@@ -11,7 +13,9 @@
 // End of variable length response
 #define COM_END		0xFF
 
-// Data structure: Type, Data
+// From Il Matto 1
+
+// Data structure: Command, Data
 // No data, response {COM_ACK} indicates IlMatto2 exist
 #define COM_PING	0
 // Wakeup wireless module, response {COM_ACK}
@@ -26,7 +30,16 @@
 #define COM_W_SOUND	101
 // Stop sending & receiving sound data, no data, response {COM_ACK}
 #define COM_W_SOUND_END	102
-// Send data to other end, data {Length(1 bytes), Data}, response {COM_ACK}
+// Send data to other end, data {Length(1 byte), Data}, response {COM_ACK}
 #define COM_W_SEND	103
+
+// Data received, data {Length(1 byte), Data}, response {COM_ACK}
+#define COM_W_RECV	200
+
+// Both send & receive can use the same buffering package type
+struct package_t {
+	uint8_t command, length, valid;
+	uint8_t data[BUFFER_SIZE];
+};
 
 #endif
