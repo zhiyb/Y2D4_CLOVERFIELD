@@ -38,11 +38,11 @@ private:
 	void displayItem(const listItem *item, const uint16_t index = -1) const;
 	void displayItems(const listItem **items, uint16_t index = 0, uint16_t last = 0) const;
 
+	tft_t *tft;
 	listItem *curItem;
 	bool pressed;
 	rTouch::coord_t prev;
 	uint16_t scr, max, cnt;
-	tft_t *tft;
 };
 
 #endif
