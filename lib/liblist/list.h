@@ -19,9 +19,13 @@
 #include <inttypes.h>
 
 struct listItem {
+	// Display name of this item
 	const char *name;
+	// Icon of this item
 	const uint8_t *image;
+	// Children items (sub menu)
 	const listItem **items;
+	// Function to execute, return value: Enter next level or not
 	bool (*func)(void);
 };
 

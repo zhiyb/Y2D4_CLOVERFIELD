@@ -38,7 +38,7 @@
 
 // Valid data variance
 #ifndef RTOUCH_DELTA
-#define RTOUCH_DELTA	10
+#define RTOUCH_DELTA	15
 #endif
 
 // Averager level

@@ -33,6 +33,7 @@ void PortraitList::setRootItem(listItem *item)
 void PortraitList::refresh(void)
 {
 	tft->setBackground(Black);
+	tft->setForeground(Black);
 	tft->setZoom(ZOOM);
 	tft->clean();
 	display();
@@ -55,10 +56,13 @@ void PortraitList::display(const listItem *item)
 		scr = 0;
 	}
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
+	tft->setTopMask(0);
+	tft->setBottomMask(tft->topEdge());
+	tft->setY(0);
+	tft->setTransform(false);
+	displayItem(currentItem());
 	tft->setTopMask(tft->topEdge());
 	tft->setBottomMask(tft->vsMaximum() - tft->bottomEdge());
-	tft->setY(0);
-	displayItem(currentItem());
 	displayItems(currentItem()->items);
 }
 
@@ -224,10 +228,13 @@ void PortraitList::activate(uint16_t index)
 	const listItem *item = *itemsAt(index);
 	if (!item)
 		return;
+	tft->setTransform(true);
+	bool enter = true;
 	if (item->func)
-		if (item->func())
-			refresh();
-	if (item->items) {
+		enter = item->func();
+	if (!tft->transform())
+		refresh();
+	if (enter && item->items) {
 		stack[stackSize++] = currentItem();
 		display(item);
 		return;
