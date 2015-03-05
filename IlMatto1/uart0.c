@@ -21,7 +21,8 @@ void uart0_init(void)
 	// Initialise data structre
 	for (i = 0; i < 1; i++)
 		rx.buffer[i].valid = tx.buffer[i].valid = 0;
-	rx.status = tx.status = UART0_TX_IDLE;
+	tx.status = UART0_TX_IDLE;
+	rx.status = UART0_RX_IDLE;
 	rx.current = tx.current = 0;
 	rx.pos = tx.pos = 0;
 
@@ -80,12 +81,33 @@ void uart0_txAbort(void)
 
 ISR(USART0_RX_vect)
 {
-	PINB |= _BV(7);
-	char c = READ();
+	uint8_t current = rx.current;
+	struct package_t *pkg = rx.buffer + current;
+	if (rx.status == UART0_RX_IDLE || rx.status & UART0_RX_WAITING)
+		goto header;
+	return;
+
+header:
+	uint8_t c = READ();
 	switch (c) {
 	case COM_ACK:
-		if (tx.status != UART0_TX_IDLE)
+		if ((tx.status & UART0_TX_STATUS) != UART0_TX_IDLE)
 			ENABLE_UDREI();			// ACK received
+		return;
+	case COM_END:
+		if ((tx.status & UART0_TX_STATUS) != UART0_TX_IDLE) {
+			tx.status |= UART0_TX_END;	// End of data received
+			ENABLE_UDREI();			// ACK received
+		}
+		return;
+	case COM_W_SEND:
+	case COM_W_RECV:
+		pkg->command = c;
+		rx.status = UART0_RX_COMMAND | UART0_RX_WAITING | UART0_RX_VARSIZE;
+		return;
+	default:
+		pkg->command = c;
+		rx.status = UART0_RX_COMMAND | UART0_RX_WAITING;
 		return;
 	}
 }
@@ -93,12 +115,12 @@ ISR(USART0_RX_vect)
 ISR(USART0_UDRE_vect)
 {
 	uint8_t current = tx.current;
-	struct package_t *pkg = &tx.buffer[current];
+	struct package_t *pkg = tx.buffer + current;
 	if (!pkg->valid) {
 		DISABLE_UDREI();
 		return;
 	}
-	switch (tx.status) {
+	switch (tx.status & UART0_TX_STATUS) {
 	case UART0_TX_IDLE:
 		WRITE(pkg->command);
 		tx.status = UART0_TX_COMMAND;
@@ -107,11 +129,13 @@ ISR(USART0_UDRE_vect)
 	case UART0_TX_COMMAND:
 		if (pkg->length) {
 			WRITE(pkg->length);
-			tx.status = UART0_TX_LENGTH;
+			tx.status &= ~UART0_TX_STATUS;
+			tx.status |= UART0_TX_LENGTH;
 			tx.pos = 0;
 		} else {
 			pkg->valid = 0;
-			tx.status = UART0_TX_IDLE;	// No data to transmit
+			tx.status &= ~UART0_TX_STATUS;
+			tx.status |= UART0_TX_IDLE;	// No data to transmit
 			tx.current = 1 - current;
 		}
 		return;
@@ -126,8 +150,11 @@ ISR(USART0_UDRE_vect)
 		return;
 	case UART0_TX_WAITING:
 		pkg->valid = 0;
-		tx.status = UART0_TX_IDLE;
+		tx.status &= ~UART0_TX_STATUS;
+		tx.status |= UART0_TX_IDLE;
 		tx.current = 1 - current;
 		return;
+	default:
+		DISABLE_UDREI();
 	}
 }

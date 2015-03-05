@@ -1,55 +1,72 @@
+/*
+ * Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdio.h>
+#include <tft.h>
+#include <portraitlist.h>
+#include <rtouch.h>
+#include <adc.h>
+#include <eemem.h>
+#include <colours.h>
 #include <communication.h>
-#include "tft.h"
 #include "uart0.h"
+#include "menu.h"
+#include "sketch.h"
 
-class tft_t tft;
-// UART0
-FILE *u0;
+static tft_t tft;
+static rTouch touch(&tft);
+static PortraitList l(&tft);
+static sketch_t sketch(&tft, &touch);
 
 void init(void)
 {
 	DDRB |= 0x80;			// LED
 	PORTB |= 0x80;
+
+	adc_init();
+	adc_enable();
 	uart0_init();
+
 	tft.init();
 	tft.setOrient(tft.Portrait);
 	tft.setForeground(0x667F);
 	tft.setBackground(0x0000);
 	tft.clean();
+
 	stdout = tftout(&tft);
+	touch.init();
+	menu::setTFT(&tft);
+	menu::setTouch(&touch);
+	menu::setSketch(&sketch);
+	sei();
+
 	tft.setBGLight(true);
+	touch.calibrate();
+	eeprom_first_done();
 }
 
 int main(void)
 {
 	init();
-	sei();
 
-start:
 	tft.clean();
-	tft.setZoom(1);
-	puts("*** IlMatto1 testing ***");
-	struct package_t *pkg;
+	tft.setForeground(0x0000);
 
-	puts("PING for IlMatto2");
-	while (!(pkg = uart0_txPackage()));
-	pkg->command = COM_PING;
-	pkg->length = 0;
-	pkg->valid++;
-	uart0_send();
-	while (uart0_txStatus() != UART0_TX_IDLE);
-	puts("Valid response received!");
+	l.refresh();
+	l.setRootItem(&menu::root::item);
+	l.display(&menu::root::item);
+
+	for (;;)
+		l.pool(&touch);
+
+	return 1;
 
 #if 0
-	puts("Wakeup wireless module");
-	uart0::putch(COM_WAKEUP);
-	if ((c = uart0::getch()) != COM_ACK)
-		printf("Unknown: %u\n", c);
-
+#if 0
 	puts("Ping for other end");
 	uart0::putch(COM_W_PING);
 	switch ((uint8_t)(c = uart0::getch())) {
@@ -77,4 +94,5 @@ loop:
 	goto start;
 
 	return 1;
+#endif
 }
