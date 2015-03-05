@@ -54,6 +54,24 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
+	namespace w_sound
+	{
+		static const char PROGMEM name[] = "W: Sound";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
+	namespace w_sound_end
+	{
+		static const char PROGMEM name[] = "W: Sound end";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
+	namespace w_send
+	{
+		static const char PROGMEM name[] = "W: Send test data";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	static const char PROGMEM name[] = "Diagnosis";
 	static const uint8_t PROGMEM icon[] = {
 		0x80,0x01,0x43,0xC2,0x24,0x24,0x08,0x10,0x10,0x08,0x10,0x08,0xD1,0x8B,0x12,0x48,
@@ -62,7 +80,8 @@ namespace diagnosis
 	using namespace misc;
 	static const listItem *items[] = {
 		&ping::item, &wakeup::item, &suspend::item,
-		&w_ping::item,
+		&w_ping::item, &w_sound::item, &w_sound_end::item,
+		&w_send::item,
 		&toggle::item, &item_03, &item_04, 0
 	};
 	static listItem item = {name, icon, items, 0};

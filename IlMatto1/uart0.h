@@ -7,39 +7,42 @@ extern "C" {
 
 #include <communication.h>
 
-// UART0 tx status
-#define UART0_TX_STATUS		0x0F	// Status mask
-#define UART0_TX_IDLE		0	// Idle
-#define UART0_TX_COMMAND	1	// Sending command byte, waiting for ACK
-#define UART0_TX_LENGTH		2	// Sending length byte
-#define UART0_TX_DATA		3	// Sending data
-#define UART0_TX_WAITING	4	// Waiting for ACK after data
 // UART0 tx status masks
-#define UART0_TX_END		0x10	// End of data received
+#define UART0_TX_SENDING	0x10	// Sending sequence of data
+#define UART0_TX_STATUS		0x0F	// Status mask
+
+// UART0 tx status
+#define UART0_TX_IDLE		0			// Idle
+#define UART0_TX_COMMAND	(UART0_TX_SENDING | 1)	// Sending command byte
+#define UART0_TX_LENGTH		(UART0_TX_SENDING | 2)	// Sending length byte
+#define UART0_TX_DATA		(UART0_TX_SENDING | 3)	// Sending data
+
+// UART0 rx status masks
+#define UART0_RX_RECEIVING	0x10	// Receiving sequence of data
+#define UART0_RX_STATUS		0x0F	// Status mask
 
 // UART0 rx status
-#define UART0_RX_STATUS		0x0F	// Status mask
 #define UART0_RX_IDLE		0	// Idle
-#define UART0_RX_COMMAND	1	// Receiving command byte, waiting for send ACK
-#define UART0_RX_LENGTH		2	// Receiving length byte
-#define UART0_RX_DATA		3	// Receiving data
-// UART0 tx status masks
-#define UART0_RX_END		0x10	// End of data received
-#define UART0_RX_WAITING	0x20	// Waiting for send ACK
-#define UART0_RX_VARSIZE	0x40	// Variable size data
+#define UART0_RX_COMMAND	(UART0_RX_RECEIVING | 1)	// Receiving command byte
+#define UART0_RX_LENGTH		(UART0_RX_RECEIVING | 2)	// Receiving length byte
+#define UART0_RX_DATA		(UART0_RX_RECEIVING | 3)	// Receiving data
 
 // Initialisation
 void uart0_init(void);
-// Request available tx package, 0 for not available
-struct package_t *uart0_txPackage(void);
-// Send the available tx package requested from above function
+// Reset tx & rx
+void uart0_reset(void);
+
+// Send valid tx packages
 void uart0_send(void);
-// Tx status
-uint8_t uart0_txStatus(void);
-// Re-send current tx package
-void uart0_txRetry(void);
-// Abort current tx package (mark as invalid, continue to next)
-void uart0_txAbort(void);
+// Request available tx package for write, 0 for not available
+struct package_t *uart0_txPackage(void);
+// ACK received
+uint8_t uart0_ack(void);
+
+// Done with rx package
+void uart0_received(void);
+// Check available rx package for read, 0 for none
+struct package_t *uart0_rxPackage(void);
 
 #ifdef __cplusplus
 }

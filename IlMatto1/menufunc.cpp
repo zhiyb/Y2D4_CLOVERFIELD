@@ -13,7 +13,7 @@ namespace menu
 
 	namespace diagnosis
 	{
-		static void packageTest(const char *name, uint8_t command);
+		static void packageTest(const char *name, uint8_t command, uint8_t length = 0, const uint8_t *data = 0);
 	}
 }
 
@@ -41,7 +41,7 @@ bool menu::toggle::func(void)
 	return false;
 }
 
-void menu::diagnosis::packageTest(const char *name, uint8_t command)
+void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t length, const uint8_t *data)
 {
 	tft->vsNormal();
 	tft->setForeground(0x667F);
@@ -52,29 +52,43 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command)
 	puts_P(PSTR("*** Il Matto1 testing ***"));
 	struct package_t *pkg;
 
-	puts_P(PSTR("Request for other commands..."));
+	puts_P(PSTR("Waiting for other commands..."));
 	while (!(pkg = uart0_txPackage()));
 	puts_P(name);
 	pkg->command = command;
-	pkg->length = 0;
+	pkg->length = length;
+	for (uint8_t i = 0; i < length; i++)
+		pkg->data[i] = *(data + i);
 	pkg->valid++;
 	uart0_send();
 
-	for (uint8_t i = 0; i < 50 && uart0_txStatus() != UART0_TX_IDLE; i++)
-		_delay_ms(100);
-
-	if (uart0_txStatus() & UART0_TX_END) {
-		tft->setForeground(Yellow);
-		puts("End of data response received!");
-	} else if (uart0_txStatus() == UART0_TX_IDLE) {
+pool:
+	pkg = uart0_rxPackage();
+	if (pkg) {
 		tft->setForeground(Green);
-		puts("Valid response received!");
-	} else {
-		tft->setForeground(Red);
-		puts("Response receive timeout!");
+		printf("Package received: ");
+		printf("C/%u", pkg->command);
+		if (pkg->command & COM_DATA) {
+			printf(", L/%u, \n", pkg->length);
+			uint8_t *ptr = pkg->data;
+			for (uint8_t i = 0; i < pkg->length; i++)
+				printf("%u, ", *ptr++);
+		}
+		putchar('\n');
+		pkg->valid = 0;
+		uart0_received();
 	}
 
-	touch->waitForPress();
+	if (uart0_ack()) {
+		tft->setForeground(Yellow);
+		puts("ACK received.");
+	}
+
+	if (touch->pressed()) {
+		//uart0_reset();
+		return;
+	}
+	goto pool;
 }
 
 bool menu::diagnosis::ping::func(void)
@@ -98,6 +112,27 @@ bool menu::diagnosis::suspend::func(void)
 bool menu::diagnosis::w_ping::func(void)
 {
 	packageTest(PSTR("Ping other end..."), COM_W_PING);
+	return false;
+}
+
+bool menu::diagnosis::w_sound::func(void)
+{
+	packageTest(PSTR("Enabling sound transceiver..."), COM_W_SOUND);
+	return false;
+}
+
+bool menu::diagnosis::w_sound_end::func(void)
+{
+	packageTest(PSTR("Disabling sound transceiver..."), COM_W_SOUND_END);
+	return false;
+}
+
+bool menu::diagnosis::w_send::func(void)
+{
+	uint8_t data[BUFFER_SIZE];
+	for (uint8_t i = 0; i < BUFFER_SIZE; i++)
+		data[i] = i;
+	packageTest(PSTR("Sending test data..."), COM_W_SEND, BUFFER_SIZE, data);
 	return false;
 }
 

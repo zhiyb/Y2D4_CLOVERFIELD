@@ -21,6 +21,9 @@ namespace menu
 		namespace suspend {bool func(void);}
 
 		namespace w_ping {bool func(void);}
+		namespace w_sound {bool func(void);}
+		namespace w_sound_end {bool func(void);}
+		namespace w_send {bool func(void);}
 	}
 
 	namespace sketch {bool func(void);}
