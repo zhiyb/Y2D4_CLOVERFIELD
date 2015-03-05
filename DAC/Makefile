@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= DAC
-SRC	= main.c dac.c
+SRC	= mainDADC.c dac.c adc.c
 LIB	= 
 LIBDIR	= ../lib
 VERSION	= 0.0.1
