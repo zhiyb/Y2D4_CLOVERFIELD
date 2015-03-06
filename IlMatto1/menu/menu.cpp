@@ -80,7 +80,7 @@ namespace diagnosis
 
 	namespace w_send
 	{
-		static const char PROGMEM name[] = "W: Send test data";
+		static const char PROGMEM name[] = "W: Test data";
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
