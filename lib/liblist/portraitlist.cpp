@@ -248,9 +248,10 @@ void PortraitList::activate(const listItem *item, const bool enter)
 		toUpperLevel();
 	return;
 ret:
-	tft->setTransform(false);
 	if (!tft->transform())
 		refresh();
+	else
+		tft->setTransform(false);
 }
 
 void PortraitList::pool(rTouch *touch)
