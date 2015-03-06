@@ -36,6 +36,12 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
+	namespace pool
+	{
+		static const char PROGMEM name[] = "Pooling";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	namespace ping
 	{
 		static const char PROGMEM name[] = "Ping";
@@ -85,7 +91,8 @@ namespace diagnosis
 	};
 	using namespace misc;
 	static const listItem *items[] = {
-		&reset::item, &ping::item, &wakeup::item, &suspend::item,
+		&reset::item, &pool::item,
+		&ping::item, &wakeup::item, &suspend::item,
 		&w_ping::item, &w_sound::item, &w_sound_end::item,
 		&w_send::item,
 		&toggle::item, &item_03, &item_04, 0

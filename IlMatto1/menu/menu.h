@@ -12,23 +12,24 @@ namespace menu
 	void setTouch(rTouch *ptr);
 	void setSketch(sketch_t *ptr);
 
-	namespace toggle {bool func(void);}
+	namespace toggle {bool func(bool enter);}
 
 	namespace diagnosis
 	{
-		namespace reset {bool func(void);}
+		namespace reset {bool func(bool enter);}
+		namespace pool {bool func(bool enter);}
 
-		namespace ping {bool func(void);}
-		namespace wakeup {bool func(void);}
-		namespace suspend {bool func(void);}
+		namespace ping {bool func(bool enter);}
+		namespace wakeup {bool func(bool enter);}
+		namespace suspend {bool func(bool enter);}
 
-		namespace w_ping {bool func(void);}
-		namespace w_sound {bool func(void);}
-		namespace w_sound_end {bool func(void);}
-		namespace w_send {bool func(void);}
+		namespace w_ping {bool func(bool enter);}
+		namespace w_sound {bool func(bool enter);}
+		namespace w_sound_end {bool func(bool enter);}
+		namespace w_send {bool func(bool enter);}
 	}
 
-	namespace sketch {bool func(void);}
+	namespace sketch {bool func(bool enter);}
 
 	namespace root
 	{

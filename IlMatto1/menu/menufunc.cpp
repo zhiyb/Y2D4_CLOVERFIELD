@@ -36,7 +36,7 @@ void menu::setSketch(sketch_t *ptr)
 	skt = ptr;
 }
 
-bool menu::toggle::func(void)
+bool menu::toggle::func(bool enter)
 {
 	PINB |= _BV(7);
 	return false;
@@ -52,6 +52,8 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t len
 
 	puts_P(PSTR("*** Il Matto1 testing ***"));
 	struct package_t *pkg;
+	if (!command)
+		goto pool;
 
 	puts_P(PSTR("Waiting for other commands..."));
 	while (!(pkg = uart0_txPackage()));
@@ -92,50 +94,56 @@ pool:
 	goto pool;
 }
 
-bool menu::diagnosis::reset::func(void)
+bool menu::diagnosis::reset::func(bool enter)
 {
 	PINB |= _BV(7);
 	uart0_reset();
 	return false;
 }
 
-bool menu::diagnosis::ping::func(void)
+bool menu::diagnosis::pool::func(bool enter)
+{
+	packageTest(0, 0);
+	return false;
+}
+
+bool menu::diagnosis::ping::func(bool enter)
 {
 	packageTest(PSTR("PING for Il Matto 2..."), COM_PING);
 	return false;
 }
 
-bool menu::diagnosis::wakeup::func(void)
+bool menu::diagnosis::wakeup::func(bool enter)
 {
 	packageTest(PSTR("Wakeup wireless module..."), COM_WAKEUP);
 	return false;
 }
 
-bool menu::diagnosis::suspend::func(void)
+bool menu::diagnosis::suspend::func(bool enter)
 {
 	packageTest(PSTR("Suspend wireless module..."), COM_SUSPEND);
 	return false;
 }
 
-bool menu::diagnosis::w_ping::func(void)
+bool menu::diagnosis::w_ping::func(bool enter)
 {
 	packageTest(PSTR("Ping other end..."), COM_W_PING);
 	return false;
 }
 
-bool menu::diagnosis::w_sound::func(void)
+bool menu::diagnosis::w_sound::func(bool enter)
 {
 	packageTest(PSTR("Enabling sound transceiver..."), COM_W_SOUND);
 	return false;
 }
 
-bool menu::diagnosis::w_sound_end::func(void)
+bool menu::diagnosis::w_sound_end::func(bool enter)
 {
 	packageTest(PSTR("Disabling sound transceiver..."), COM_W_SOUND_END);
 	return false;
 }
 
-bool menu::diagnosis::w_send::func(void)
+bool menu::diagnosis::w_send::func(bool enter)
 {
 	uint8_t data[BUFFER_SIZE];
 	for (uint8_t i = 0; i < BUFFER_SIZE; i++)
@@ -144,7 +152,7 @@ bool menu::diagnosis::w_send::func(void)
 	return false;
 }
 
-bool menu::sketch::func(void)
+bool menu::sketch::func(bool enter)
 {
 	skt->init();
 
