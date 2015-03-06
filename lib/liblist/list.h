@@ -35,8 +35,8 @@ struct listItem {
 	const uint8_t *image;
 	// Children items (sub menu)
 	const listItem **items;
-	// Function to execute, return value: Enter next level or not
-	bool (*func)(void);
+	// Function to execute, arg: Enter or leave, ret: Accept
+	bool (*func)(bool enter);
 };
 
 #endif

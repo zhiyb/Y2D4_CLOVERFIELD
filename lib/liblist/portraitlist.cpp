@@ -33,7 +33,6 @@ void PortraitList::setRootItem(listItem *item)
 void PortraitList::refresh(void)
 {
 	tft->setBackground(Black);
-	tft->setForeground(Black);
 	tft->setZoom(ZOOM);
 	tft->clean();
 	display();
@@ -56,11 +55,7 @@ void PortraitList::display(const listItem *item)
 		scr = 0;
 	}
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
-	tft->setTopMask(0);
-	tft->setBottomMask(tft->topEdge());
-	tft->setY(DEF_TOP_AREA - ITEM_HEIGHT);
-	tft->setTransform(false);
-	displayItem(currentItem());
+	displayTop();
 	tft->setTopMask(tft->topEdge());
 	tft->setBottomMask(tft->vsMaximum() - tft->bottomEdge());
 	displayItems(currentItem()->items);
@@ -74,6 +69,17 @@ uint16_t PortraitList::countItems(const listItem **items) const
 	for (i = 0; *items != 0; i++)
 		items++;
 	return i;
+}
+
+void PortraitList::displayTop(void) const
+{
+	tft->setTopMask(0);
+	tft->setBottomMask(tft->vsMaximum() - tft->topEdge());
+	tft->setY(DEF_TOP_AREA - ITEM_HEIGHT);
+	tft->setForeground(Black);
+	tft->setZoom(ZOOM);
+	tft->setTransform(false);
+	displayItem(currentItem());
 }
 
 void PortraitList::displayItem(const listItem *item, const uint16_t index) const
@@ -117,6 +123,8 @@ disp:
 
 void PortraitList::displayItems(const listItem **items, uint16_t index, uint16_t last) const
 {
+	tft->setForeground(Black);
+	tft->setZoom(ZOOM);
 	tft->setTransform(true);
 	uint16_t first = itemAt(scroll(), 0);
 	if (index < first) {
@@ -216,29 +224,33 @@ void PortraitList::clickOn(uint16_t x, uint16_t y)
 	if (y >= tft->bottomEdge())
 		return;
 	if (y < tft->topEdge()) {
-		toUpperLevel();
+		activate(currentItem(), false);
 		return;
 	}
 	activate(itemAt(scroll() + y - tft->topEdge(), x));
 	return;
 }
 
-void PortraitList::activate(uint16_t index)
+void PortraitList::activate(const listItem *item, const bool enter)
 {
-	const listItem *item = *itemsAt(index);
 	if (!item)
 		return;
 	tft->setTransform(true);
-	bool enter = true;
+	bool accept = true;
 	if (item->func)
-		enter = item->func();
-	if (!tft->transform())
-		refresh();
-	if (enter && item->items) {
+		accept = item->func(enter);
+	if (!accept || !item->items)
+		goto ret;
+	if (enter) {
 		stack[stackSize++] = currentItem();
 		display(item);
-		return;
-	}
+	} else
+		toUpperLevel();
+	return;
+ret:
+	tft->setTransform(false);
+	if (!tft->transform())
+		refresh();
 }
 
 void PortraitList::pool(rTouch *touch)
