@@ -16,6 +16,8 @@ namespace menu
 
 	namespace diagnosis
 	{
+		namespace reset {bool func(void);}
+
 		namespace ping {bool func(void);}
 		namespace wakeup {bool func(void);}
 		namespace suspend {bool func(void);}

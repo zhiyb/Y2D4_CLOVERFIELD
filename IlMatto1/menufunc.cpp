@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "uart0.h"
 #include "sketch.h"
+#include "pool.h"
 
 namespace menu
 {
@@ -91,6 +92,13 @@ pool:
 	goto pool;
 }
 
+bool menu::diagnosis::reset::func(void)
+{
+	PINB |= _BV(7);
+	uart0_reset();
+	return false;
+}
+
 bool menu::diagnosis::ping::func(void)
 {
 	packageTest(PSTR("PING for Il Matto 2..."), COM_PING);
@@ -140,9 +148,11 @@ bool menu::sketch::func(void)
 {
 	skt->init();
 
-	for (;;)
+	for (;;) {
+		pool();
 		if (!skt->pool())
 			break;
+	}
 
 	return false;
 }

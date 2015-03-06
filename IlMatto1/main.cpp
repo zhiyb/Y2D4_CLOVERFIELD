@@ -14,13 +14,17 @@
 #include <colours.h>
 #include <communication.h>
 #include "uart0.h"
+#include "tick.h"
 #include "menu.h"
 #include "sketch.h"
+#include "pool.h"
 
-static tft_t tft;
-static rTouch touch(&tft);
-static PortraitList l(&tft);
-static sketch_t sketch(&tft, &touch);
+using namespace colours::b16;
+
+tft_t tft;
+rTouch touch(&tft);
+PortraitList list(&tft);
+sketch_t sketch;
 
 void init(void)
 {
@@ -30,6 +34,7 @@ void init(void)
 	adc_init();
 	adc_enable();
 	uart0_init();
+	tick_init();
 
 	tft.init();
 	tft.setOrient(tft.Portrait);
@@ -54,45 +59,16 @@ int main(void)
 	init();
 
 	tft.clean();
-	tft.setForeground(0x0000);
+	tft.setForeground(Black);
 
-	l.refresh();
-	l.setRootItem(&menu::root::item);
-	l.display(&menu::root::item);
+	list.refresh();
+	list.setRootItem(&menu::root::item);
+	list.display(&menu::root::item);
 
-	for (;;)
-		l.pool(&touch);
-
-	return 1;
-
-#if 0
-#if 0
-	puts("Ping for other end");
-	uart0::putch(COM_W_PING);
-	switch ((uint8_t)(c = uart0::getch())) {
-	case COM_ACK:
-		puts("Responsed.");
-		break;
-	case COM_END:
-		puts("Timeout.");
-		break;
-	default:
-		printf("Unknown: %u\n", c);
-		break;
+	for (;;) {
+		pool();
+		list.pool(&touch);
 	}
 
-	puts("Start sound transmit");
-	uart0::putch(COM_W_SOUND);
-	if ((c = uart0::getch()) != COM_ACK)
-		printf("Unknown: %u\n", c);
-
-	puts("Finished");
-#endif
-
-loop:
-	goto loop;
-	goto start;
-
 	return 1;
-#endif
 }

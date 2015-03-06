@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= IlMatto1
-SRC	= main.cpp uart0.c menu.cpp menufunc.cpp sketch.cpp
+SRC	= main.cpp uart0.c menu.cpp menufunc.cpp sketch.cpp tick.c pool.cpp
 LIB	= list rTouch common tft-cpp
 LIBDIR	= ../lib
 VERSION	= 0.0.1
