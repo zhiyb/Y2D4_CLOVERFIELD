@@ -42,7 +42,7 @@ private:
 
 	tft_t *tft;
 	const listItem *curItem;
-	const listItem *stack[ITEM_STACK_SIZE];
+	const listItem *stack[LIST_STACK_SIZE];
 	rTouch::coord_t prev;
 	uint16_t scr, max, cnt;
 	uint8_t stackSize;

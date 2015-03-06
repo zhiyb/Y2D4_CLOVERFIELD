@@ -19,8 +19,8 @@
 #define ITEM_HEIGHT	(FONT_HEIGHT * ZOOM + ITEM_NAME_Y * 2)
 //#define ITEM_EMPTY	"** EMPTY **"
 
-#define DEF_TOP_AREA	(ITEM_HEIGHT * 1)
-#define DEF_BOTTOM_AREA	(ITEM_HEIGHT * 1)
+#define DEF_TOP_AREA	(ITEM_HEIGHT * 1 + LIST_TOP_RESERVED)
+#define DEF_BOTTOM_AREA	(ITEM_HEIGHT * 0 + LIST_BOTTOM_RESERVED)
 
 using namespace colours::b16;
 
@@ -58,7 +58,7 @@ void PortraitList::display(const listItem *item)
 	tft->setVerticalScrolling(TOP_AREA + scroll() % SCROLL_AREA);
 	tft->setTopMask(0);
 	tft->setBottomMask(tft->topEdge());
-	tft->setY(0);
+	tft->setY(DEF_TOP_AREA - ITEM_HEIGHT);
 	tft->setTransform(false);
 	displayItem(currentItem());
 	tft->setTopMask(tft->topEdge());
