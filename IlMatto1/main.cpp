@@ -6,18 +6,11 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdio.h>
-#include <tft.h>
-#include <portraitlist.h>
-#include <rtouch.h>
 #include <adc.h>
 #include <eemem.h>
-#include <colours.h>
-#include <communication.h>
-#include "uart0.h"
-#include "tick.h"
 #include "menu.h"
-#include "sketch.h"
 #include "pool.h"
+#include "common.h"
 
 using namespace colours::b16;
 
@@ -44,6 +37,7 @@ void init(void)
 
 	stdout = tftout(&tft);
 	touch.init();
+	pool::init();
 	menu::setTFT(&tft);
 	menu::setTouch(&touch);
 	menu::setSketch(&sketch);
@@ -66,7 +60,7 @@ int main(void)
 	list.display(&menu::root::item);
 
 	for (;;) {
-		pool();
+		pool::pool();
 		list.pool(&touch);
 	}
 

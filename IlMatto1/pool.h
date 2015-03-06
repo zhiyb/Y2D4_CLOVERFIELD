@@ -1,6 +1,10 @@
 #ifndef POOL_H
 #define POOL_H
 
-void pool(void);
+namespace pool
+{
+	void init(void);
+	void pool(void);
+}
 
 #endif

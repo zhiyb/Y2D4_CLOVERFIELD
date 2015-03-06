@@ -149,7 +149,7 @@ bool menu::sketch::func(void)
 	skt->init();
 
 	for (;;) {
-		pool();
+		pool::pool();
 		if (!skt->pool())
 			break;
 	}

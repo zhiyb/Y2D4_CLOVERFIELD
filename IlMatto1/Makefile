@@ -1,7 +1,10 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= IlMatto1
-SRC	= main.cpp uart0.c menu.cpp menufunc.cpp sketch.cpp tick.c pool.cpp
+SRC	= main.cpp pool.cpp indicator.cpp
+SRC	+= hw/uart0.c hw/tick.c
+SRC	+= menu/menu.cpp menu/menufunc.cpp
+SRC	+= element/sketch.cpp
 LIB	= list rTouch common tft-cpp
 LIBDIR	= ../lib
 VERSION	= 0.0.1
@@ -13,8 +16,9 @@ OPTIMIZE	= -Os
 DEFS	+= -DF_CPU=12000000
 DEFS	+= -DTFT_VERTICALSCROLLING
 DEFS	+= -DRTOUCH_SWAPXY
+DEFS	+= -DLIST_TOP_RESERVED=8
 LIBS	+= -lm
-INCS	+= -I../inc
+INCS	+= -I../inc -I. -I./hw -I./menu -I./element
 
 EFUSE	= 0xFF
 HFUSE	= 0x9C

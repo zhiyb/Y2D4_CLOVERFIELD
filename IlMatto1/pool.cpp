@@ -2,14 +2,23 @@
 #include <communication.h>
 #include "pool.h"
 #include "tick.h"
-#include "structures.h"
+#include "common.h"
 #include "uart0.h"
+#include "indicator.h"
+
+namespace pool
+{
+	static void packageHandle(void);
+}
 
 using namespace colours::b16;
 
-static volatile bool pingChk = false;
+void pool::init(void)
+{
+	indicator::init();
+}
 
-static void packageHandle(void)
+static void pool::packageHandle(void)
 {
 	package_t *pkg = uart0_rxPackage();
 	if (!pkg)
@@ -20,41 +29,8 @@ static void packageHandle(void)
 	}
 }
 
-static void ping(void)
-{
-	if (pingChk)
-		return;
-	package_t *pkg = uart0_txPackage();
-	if (!pkg) {
-		pingChk = false;
-		return;
-	}
-	pkg->command = COM_PING;
-	pkg->valid++;
-	uart0_send();
-	pingChk = true;
-}
-
-static void pingCheck(void)
-{
-	if (!pingChk)
-		return;
-	uint16_t clr;
-	if (uart0_ack())
-		clr = Blue;
-	else {
-		uart0_reset();
-		clr = Red;
-	}
-	tft.rectangle(0, 0, 4, 4, clr);
-	pingChk = false;
-}
-
-void pool(void)
+void pool::pool(void)
 {
 	packageHandle();
-	if (tick() == 100)
-		ping();
-	else if (tick() == 110)
-		pingCheck();
+	indicator::pool();
 }

@@ -1,10 +1,8 @@
 #include <colours.h>
 #include "sketch.h"
-#include "structures.h"
+#include "common.h"
 
 //#define AUTO_COLOUR
-
-using namespace colours::b16;
 
 const uint16_t sketch_t::colours[8] = {Red, Green, Blue, Yellow, Cyan, Magenta, White, Black};
 
