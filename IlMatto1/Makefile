@@ -1,10 +1,10 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= IlMatto1
-SRC	= main.cpp pool.cpp indicator.cpp
+SRC	= main.cpp pool.cpp
 SRC	+= hw/uart0.c hw/tick.c
 SRC	+= menu/menu.cpp menu/menufunc.cpp
-SRC	+= element/sketch.cpp
+SRC	+= element/sketch.cpp element/indicator.cpp
 LIB	= list rTouch common tft-cpp
 LIBDIR	= ../lib
 VERSION	= 0.0.1
