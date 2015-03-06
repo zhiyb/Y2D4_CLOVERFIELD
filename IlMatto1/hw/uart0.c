@@ -46,7 +46,7 @@ void uart0_reset(void)
 	DISABLE_UDREI();
 
 	uint8_t i;
-	for (i = 0; i < 1; i++)
+	for (i = 0; i < 2; i++)
 		rx.buffer[i].valid = tx.buffer[i].valid = 0;
 	tx.status = UART0_TX_IDLE;
 	rx.status = UART0_RX_IDLE;
