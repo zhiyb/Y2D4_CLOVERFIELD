@@ -9,7 +9,7 @@ namespace indicator
 {
 	void init(void);
 	// Pooling for ping
-	void pool(void);
+	void pool(bool detailed);
 	// String in PROGMEM
 	void refresh(uint16_t clr, const char *str);
 }

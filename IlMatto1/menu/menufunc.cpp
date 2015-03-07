@@ -1,17 +1,11 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-#include <colours.h>
 #include "menu.h"
-#include "uart0.h"
-#include "sketch.h"
 #include "pool.h"
+#include "common.h"
 
 namespace menu
 {
-	static tft_t *tft;
-	static rTouch *touch;
-	static sketch_t *skt;
-
 	namespace diagnosis
 	{
 		static void packageTest(const char *name, uint8_t command, uint8_t length = 0, const uint8_t *data = 0);
@@ -19,22 +13,6 @@ namespace menu
 }
 
 using namespace menu;
-using namespace colours::b16;
-
-void menu::setTFT(tft_t *ptr)
-{
-	tft = ptr;
-}
-
-void menu::setTouch(rTouch *ptr)
-{
-	touch = ptr;
-}
-
-void menu::setSketch(sketch_t *ptr)
-{
-	skt = ptr;
-}
 
 bool menu::toggle::func(bool enter)
 {
@@ -44,11 +22,11 @@ bool menu::toggle::func(bool enter)
 
 void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t length, const uint8_t *data)
 {
-	tft->vsNormal();
-	tft->setForeground(0x667F);
-	tft->setBackground(Black);
-	tft->setZoom(1);
-	tft->clean();
+	tft.vsNormal();
+	tft.setForeground(0x667F);
+	tft.setBackground(Black);
+	tft.setZoom(1);
+	tft.clean();
 
 	puts_P(PSTR("*** Il Matto1 testing ***"));
 	struct package_t *pkg;
@@ -68,7 +46,7 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t len
 pool:
 	pkg = uart0_rxPackage();
 	if (pkg) {
-		tft->setForeground(Green);
+		tft.setForeground(Green);
 		printf("Package received: ");
 		printf("C/%u", pkg->command);
 		if (pkg->command & COM_DATA) {
@@ -83,11 +61,11 @@ pool:
 	}
 
 	if (uart0_ack()) {
-		tft->setForeground(Yellow);
+		tft.setForeground(Yellow);
 		puts("ACK received.");
 	}
 
-	if (touch->pressed()) {
+	if (touch.pressed()) {
 		//uart0_reset();
 		return;
 	}
@@ -154,11 +132,40 @@ bool menu::diagnosis::w_send::func(bool enter)
 
 bool menu::sketch::func(bool enter)
 {
-	skt->init();
+	tft.vsNormal();
+	::sketch.init();
 
 	for (;;) {
-		pool::pool();
-		if (!skt->pool())
+		pool::pool(false);
+		if (!::sketch.pool())
+			break;
+	}
+
+	return false;
+}
+
+bool menu::settings::calibration::func(bool enter)
+{
+	tft.vsNormal();
+	touch.recalibrate();
+	return false;
+}
+
+bool menu::settings::keypadcal::func(bool enter)
+{
+	tft.vsNormal();
+	keypad.recalibrate();
+	return false;
+}
+
+bool menu::diagnosis::keypad::func(bool enter)
+{
+	tft.vsNormal();
+	::keypad.display();
+
+	for (;;) {
+		::pool::pool(false);
+		if (!::keypad.testPool())
 			break;
 	}
 

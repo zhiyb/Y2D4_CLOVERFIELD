@@ -18,6 +18,7 @@ tft_t tft;
 rTouch touch(&tft);
 PortraitList list(&tft);
 sketch_t sketch;
+keypad_t keypad;
 
 void init(void)
 {
@@ -37,14 +38,13 @@ void init(void)
 
 	stdout = tftout(&tft);
 	touch.init();
+	keypad.init();
 	pool::init();
-	menu::setTFT(&tft);
-	menu::setTouch(&touch);
-	menu::setSketch(&sketch);
 	sei();
 
 	tft.setBGLight(true);
 	touch.calibrate();
+	keypad.calibrate();
 	eeprom_first_done();
 }
 
@@ -60,7 +60,7 @@ int main(void)
 	list.display(&menu::root::item);
 
 	for (;;) {
-		pool::pool();
+		pool::pool(true);
 		list.pool(&touch);
 	}
 

@@ -29,8 +29,8 @@ static void pool::packageHandle(void)
 	}
 }
 
-void pool::pool(void)
+void pool::pool(bool detailed)
 {
 	packageHandle();
-	indicator::pool();
+	indicator::pool(detailed);
 }

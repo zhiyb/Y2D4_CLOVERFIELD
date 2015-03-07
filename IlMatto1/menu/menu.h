@@ -8,10 +8,6 @@
 
 namespace menu
 {
-	void setTFT(tft_t *ptr);
-	void setTouch(rTouch *ptr);
-	void setSketch(sketch_t *ptr);
-
 	namespace toggle {bool func(bool enter);}
 
 	namespace diagnosis
@@ -27,9 +23,17 @@ namespace menu
 		namespace w_sound {bool func(bool enter);}
 		namespace w_sound_end {bool func(bool enter);}
 		namespace w_send {bool func(bool enter);}
+
+		namespace keypad {bool func(bool enter);}
 	}
 
 	namespace sketch {bool func(bool enter);}
+
+	namespace settings
+	{
+		namespace calibration {bool func(bool enter);}
+		namespace keypadcal {bool func(bool enter);}
+	}
 
 	namespace root
 	{

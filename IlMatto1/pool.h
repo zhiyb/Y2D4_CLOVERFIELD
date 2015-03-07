@@ -4,7 +4,8 @@
 namespace pool
 {
 	void init(void);
-	void pool(void);
+	// Detailed indicator (ping check)
+	void pool(bool detailed);
 }
 
 #endif
