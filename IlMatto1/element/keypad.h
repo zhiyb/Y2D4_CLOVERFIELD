@@ -28,7 +28,7 @@ public:
 	void recalibrate(void) {calibrate(true);}
 	void display(void) const;
 	// Arg: keep return pressing key, Ret: index of pressed key or KEYPAD_NA
-	uint8_t pool(bool keep = false);
+	uint8_t pool(bool keep = false, bool code = true);
 	bool testPool(void);
 
 private:
@@ -38,13 +38,19 @@ private:
 	void drawKey(uint8_t idx, uint16_t clr = KEYPAD_DEF_CLR) const;
 	void drawKeypad(void) const;
 	uint8_t keyAt(const rTouch::coord_t pos) const;
+	// Translate key index to key code
+	uint8_t translate(uint8_t idx);
 
 	uint8_t prev, prevTest;
 	struct cal_t {
 		rTouch::coord_t pos, size;
 	} cal;
 	static struct cal_t EEMEM NVcal;
+
+	// Display name (1 char)
 	static const char PGMkeyName[KEYPAD_SIZE] PROGMEM;
+	// Key code
+	static const uint8_t PGMkeyCode[KEYPAD_SIZE] PROGMEM;
 };
 
 #endif

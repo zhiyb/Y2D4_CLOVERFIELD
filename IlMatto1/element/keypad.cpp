@@ -29,11 +29,23 @@ const char keypad_t::PGMkeyName[KEYPAD_SIZE] PROGMEM = {
 #endif
 };
 
+const uint8_t keypad_t::PGMkeyCode[KEYPAD_SIZE] PROGMEM = {
+	0x01, 0x02, 0x03, 0x0A,
+	0x04, 0x05, 0x06, 0x0B,
+	0x07, 0x08, 0x09, 0x0C,
+	0x0D, 0x00, 0x0E, 0x0F,
+};
+
 struct keypad_t::cal_t EEMEM keypad_t::NVcal;
 
 void keypad_t::init(void)
 {
 	prevTest = prev = KEYPAD_NA;
+}
+
+uint8_t keypad_t::translate(uint8_t idx)
+{
+	return pgm_read_byte(&PGMkeyCode[idx]);
 }
 
 void keypad_t::drawCross(const rTouch::coord_t pos, uint16_t c) const
@@ -119,7 +131,7 @@ uint8_t keypad_t::keyAt(const rTouch::coord_t pos) const
 	return (pos.y - cal.pos.y) * KEYPAD_SIZE_Y / cal.size.y * KEYPAD_SIZE_X + (pos.x - cal.pos.x) * KEYPAD_SIZE_X / cal.size.x;
 }
 
-uint8_t keypad_t::pool(bool keep)
+uint8_t keypad_t::pool(bool keep, bool code)
 {
 	uint8_t idx;
 	if (touch.pressed()) {
@@ -131,7 +143,7 @@ uint8_t keypad_t::pool(bool keep)
 		idx = KEYPAD_NA;
 ret:
 	prev = idx;
-	return idx;
+	return code ? translate(idx) : idx;
 }
 
 bool keypad_t::testPool(void)
@@ -141,12 +153,17 @@ bool keypad_t::testPool(void)
 			prevTest = prev = KEYPAD_NA;
 			return false;
 		}
-	uint8_t idx = pool(true);
+	uint8_t idx = pool(true, false);
 	if (idx != prevTest) {
 		if (prevTest != KEYPAD_NA)
 			drawKey(prevTest);
-		if (idx != KEYPAD_NA)
+		tft.setXY(DRAW_X, DRAW_Y - FONT_HEIGHT * 2);
+		if (idx != KEYPAD_NA) {
+			uint8_t code = translate(idx);
+			tft << (code < 0x0A ? code + '0' : code - 0x0A + 'A');
 			drawKey(idx, KEYPAD_ACT_CLR);
+		} else
+			tft << " ";
 	}
 	prevTest = idx;
 	return true;
