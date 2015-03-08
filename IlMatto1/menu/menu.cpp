@@ -16,10 +16,6 @@ namespace misc
 		0x83,0xC1,0x40,0x02,0x20,0x04,0x13,0xC8,0x0C,0x30,0x0C,0x30,0x92,0x49,0x91,0x89,
 		0x91,0x89,0x92,0x49,0x0C,0x30,0x0C,0x30,0x13,0xC8,0x20,0x04,0x40,0x02,0x83,0xC1,
 	};
-	static const char PROGMEM name_03[] = "Item 3";
-	static listItem item_03 = {name_03, icon_test, 0, 0};
-	static const char PROGMEM name_04[] = "Item 4";
-	static listItem item_04 = {name_04, icon_test, 0, 0};
 }
 
 namespace toggle
@@ -113,7 +109,7 @@ namespace diagnosis
 		&ping::item, &wakeup::item, &suspend::item,
 		&w_ping::item, &w_sound::item, &w_sound_end::item,
 		&w_send::item, &w_data::item,
-		&keypad::item, &toggle::item, &item_03, &item_04, 0
+		&keypad::item, &toggle::item, 0
 	};
 	static listItem item = {name, icon, items, 0};
 }

@@ -1,7 +1,9 @@
+/*
+ *  Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include "pool.h"
 #include "common.h"
-
-using namespace colours::b16;
 
 package_t *pool::pool(void)
 {

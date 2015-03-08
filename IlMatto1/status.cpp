@@ -1,3 +1,7 @@
+/*
+ *  Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include "status.h"
 #include "common.h"
 
@@ -29,12 +33,8 @@ void status_t::pingCheck(void)
 	if (!pingChk)
 		return;
 	exist.IlMatto2Updated = true;
-	if (uart0_ack())
-		exist.IlMatto2 = true;
-	else {
-		exist.IlMatto2 = false;
+	if (!(exist.IlMatto2 = uart0_ack()))
 		uart0_reset();
-	}
 	pingChk = false;
 }
 
@@ -42,15 +42,8 @@ void status_t::pingRemoteCheck(void)
 {
 	if (!pingChk)
 		return;
-	exist.IlMatto2Updated = true;
 	exist.remoteUpdated = true;
-	if (uart0_ack())
-		exist.IlMatto2 = true;
-	else {
-		exist.IlMatto2 = false;
-		uart0_reset();
-	}
-	pingChk = false;
+	pingCheck();
 }
 
 package_t *status_t::pool(package_t *pkg)
@@ -64,13 +57,16 @@ package_t *status_t::pool(package_t *pkg)
 	case COM_PING:
 		uart0_done(pkg);
 		return 0;
-	case COM_W_PING:
-		uart0_done(pkg);
-		while (!(pkg = uart0_txPackage()));
-		pkg->command = COM_W_PING_SU;
-		pkg->valid++;
-		uart0_send();
-		return 0;
+	case COM_W_PING: {
+			package_t *tx = uart0_txPackage();
+			if (tx) {
+				uart0_done(pkg);
+				tx->command = COM_W_PING_SU;
+				tx->valid++;
+				uart0_send();
+			}
+			return 0;
+		}
 	}
 	return pkg;
 }

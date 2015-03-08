@@ -129,13 +129,13 @@ bool menu::diagnosis::w_ping::func(bool enter)
 
 bool menu::diagnosis::w_sound::func(bool enter)
 {
-	packageTest(PSTR("Enabling sound transceiver..."), COM_W_SOUND);
+	packageTest(PSTR("Enabling audio transceiver..."), COM_W_AUDIO);
 	return false;
 }
 
 bool menu::diagnosis::w_sound_end::func(bool enter)
 {
-	packageTest(PSTR("Disabling sound transceiver..."), COM_W_SOUND_END);
+	packageTest(PSTR("Disabling audio transceiver..."), COM_W_AUDIO_END);
 	return false;
 }
 
