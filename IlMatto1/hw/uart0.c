@@ -2,6 +2,27 @@
 #include <avr/interrupt.h>
 #include "uart0.h"
 
+// UART0 tx status masks
+#define UART0_TX_SENDING	0x10	// Sending sequence of data
+#define UART0_TX_STATUS		0x0F	// Status mask
+
+// UART0 tx status
+#define UART0_TX_IDLE		0			// Idle
+#define UART0_TX_WAITING	1			// Waiting for ACK
+#define UART0_TX_COMMAND	(UART0_TX_SENDING | 2)	// Sending command byte
+#define UART0_TX_LENGTH		(UART0_TX_SENDING | 3)	// Sending length byte
+#define UART0_TX_DATA		(UART0_TX_SENDING | 4)	// Sending data
+
+// UART0 rx status masks
+#define UART0_RX_RECEIVING	0x10	// Receiving sequence of data
+#define UART0_RX_STATUS		0x0F	// Status mask
+
+// UART0 rx status
+#define UART0_RX_IDLE		0	// Idle
+#define UART0_RX_COMMAND	(UART0_RX_RECEIVING | 1)	// Receiving command byte
+#define UART0_RX_LENGTH		(UART0_RX_RECEIVING | 2)	// Receiving length byte
+#define UART0_RX_DATA		(UART0_RX_RECEIVING | 3)	// Receiving data
+
 #define READ()		UDR0
 #define WRITE(d)	UDR0 = d
 #define ENABLE_UDREI()	UCSR0B |= _BV(UDRIE0)

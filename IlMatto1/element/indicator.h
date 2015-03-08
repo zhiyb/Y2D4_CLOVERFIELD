@@ -7,8 +7,6 @@
 
 namespace indicator
 {
-	void init(void);
-
 	// Existence checking
 	void checkIlMatto2(bool detailed);
 	void checkRemote(bool detailed);

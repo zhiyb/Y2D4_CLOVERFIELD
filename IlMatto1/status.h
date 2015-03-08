@@ -10,7 +10,7 @@ public:
 
 	void checkIlMatto2(void);
 	void checkRemote(void);
-	volatile package_t *pool(volatile package_t *pkg);
+	package_t *pool(package_t *pkg);
 
 	struct {
 		bool IlMatto2;

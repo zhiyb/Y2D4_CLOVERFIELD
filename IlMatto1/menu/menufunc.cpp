@@ -34,7 +34,7 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t len
 	tft.clean();
 
 	puts_P(PSTR("*** Il Matto1 testing ***"));
-	volatile struct package_t *pkg;
+	struct package_t *pkg;
 	if (!command)
 		goto pool;
 
@@ -63,7 +63,7 @@ pool:
 			printf("C/%u", pkg->command);
 			if (pkg->command & COM_DATA) {
 				printf(", L/%u, \n", pkg->length);
-				volatile uint8_t *ptr = pkg->data;
+				uint8_t *ptr = pkg->data;
 				for (uint8_t i = 0; i < pkg->length; i++)
 					printf("%u, ", *ptr++);
 			}
@@ -161,7 +161,7 @@ bool menu::diagnosis::w_data::func(bool enter)
 	tft.clean();
 
 	puts_P(PSTR("*** Il Matto1 testing ***"));
-	volatile struct package_t *pkg;
+	struct package_t *pkg;
 
 	for (uint8_t i = 0; i < 10; i++) {
 		puts_P(PSTR("Alloc tx package..."));

@@ -23,7 +23,7 @@ status_t status;
 
 void init(void)
 {
-	DDRB |= _BV(7) | _BV(6);
+	DDRB |= _BV(7);
 	PORTB |= _BV(7);		// LED
 
 	adc_init();
@@ -40,7 +40,6 @@ void init(void)
 	stdout = tftout(&tft);
 	touch.init();
 	keypad.init();
-	pool::init();
 	sei();
 
 	tft.setBGLight(true);

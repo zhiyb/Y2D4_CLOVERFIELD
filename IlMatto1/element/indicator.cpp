@@ -5,10 +5,6 @@
 #define STATUS_TEXT_W	(tft.width() - INDICATOR_SIZE - STATUS_X)
 #define COLOURPICKER_X	(INDICATOR_SIZE)
 
-void indicator::init(void)
-{
-}
-
 void indicator::refresh(const uint16_t clr, const char *str)
 {
 	tft.rectangle(STATUS_X, 0, INDICATOR_SIZE, INDICATOR_SIZE, clr);

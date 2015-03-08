@@ -20,7 +20,7 @@ void sketch_t::clean(void)
 	indicator::colourPicker(clr, size);
 }
 
-bool sketch_t::packageHandle(volatile package_t *pkg)
+bool sketch_t::packageHandle(package_t *pkg)
 {
 	if (!pkg || (pkg->command != COM_W_RECV && pkg->command != COM_W_SEND))
 		return false;
@@ -43,7 +43,7 @@ bool sketch_t::packageHandle(volatile package_t *pkg)
 
 void sketch_t::sendCleanPackage(void)
 {
-	volatile package_t *pkg;
+	package_t *pkg;
 	uint16_t t = tick() ? tick() - 1 : TICK_CYCLE;
 	while (!(pkg = uart0_txPackage()))
 		if (tick() == t)
@@ -63,7 +63,7 @@ void sketch_t::sendPackage(void)
 	buffer.s.clr = clr;
 	buffer.s.size = size;
 
-	volatile package_t *pkg;
+	package_t *pkg;
 	//uint16_t t = tick() ? tick() - 1 : TICK_CYCLE;
 	while (!(pkg = uart0_txPackage()));
 	//	if (tick() == t)
@@ -98,7 +98,7 @@ void sketch_t::writeBuffer(uint16_t x, uint16_t y)
 		sendPackage();
 }
 
-volatile package_t *sketch_t::pool(volatile package_t *pkg)
+package_t *sketch_t::pool(package_t *pkg)
 {
 	if (shared() && packageHandle(pkg)) {
 		uart0_done(pkg);

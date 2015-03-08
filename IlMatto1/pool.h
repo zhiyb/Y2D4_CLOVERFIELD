@@ -5,8 +5,7 @@
 
 namespace pool
 {
-	void init(void);
-	// Detailed indicator (ping check)
+	// Package fetch & basic pool
 	package_t *pool(void);
 }
 
