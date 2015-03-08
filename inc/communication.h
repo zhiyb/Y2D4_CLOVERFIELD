@@ -23,7 +23,7 @@ extern "C" {
 // Data type mask
 #define COM_TYPE	0x0F
 // Variable length data (length byte & data)
-#define COM_DATA	0x10
+#define COM_DATA	0x80
 
 // Data structure: Command, Data
 // No data, response {COM_ACK} indicates IlMatto2 exist
