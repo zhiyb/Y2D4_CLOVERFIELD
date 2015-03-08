@@ -35,27 +35,29 @@ extern "C" {
 #define COM_WAKEUP	2
 // Suspend wireless module for power saving
 #define COM_SUSPEND	3
+// Set wireless module frequency, data 2 bytes, LE uint16_t
+#define COM_FREQ	4
 
 // Wireless connection operations
 // Ping for other end
-#define COM_W_PING	4
+#define COM_W_PING	5
 // Ping succeed reply
-#define COM_W_PING_SU	5
+#define COM_W_PING_SU	6
 // Ping timeout reply
-#define COM_W_PING_TO	6
+#define COM_W_PING_TO	7
 // Suggested timeout for remote ping, unit: ms
 #define COM_W_PING_TIMEOUT	100
 
 // Start transmiting audio data
-#define COM_W_AUDIO_TX	7
+#define COM_W_AUDIO_TX	8
 // Start receiving audio data
-#define COM_W_AUDIO_RX	8
+#define COM_W_AUDIO_RX	9
 // Stop sending & receiving audio data
-#define COM_W_AUDIO_END	9
+#define COM_W_AUDIO_END	10
 // Send data to other end
-#define COM_W_SEND	(COM_DATA | 10)
+#define COM_W_SEND	(COM_DATA | 11)
 // Data received
-#define COM_W_RECV	(COM_DATA | 10)
+#define COM_W_RECV	(COM_DATA | 11)
 
 // Both send & receive can use the same buffering package type
 struct package_t {
