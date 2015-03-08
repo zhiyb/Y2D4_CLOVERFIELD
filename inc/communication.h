@@ -46,10 +46,12 @@ extern "C" {
 // Suggested timeout for remote ping, unit: ms
 #define COM_W_PING_TIMEOUT	100
 
-// Start sending & receiving audio data
-#define COM_W_AUDIO	7
+// Start transmiting audio data
+#define COM_W_AUDIO_TX	7
+// Start receiving audio data
+#define COM_W_AUDIO_RX	8
 // Stop sending & receiving audio data
-#define COM_W_AUDIO_END	8
+#define COM_W_AUDIO_END	9
 // Send data to other end
 #define COM_W_SEND	(COM_DATA | 10)
 // Data received
