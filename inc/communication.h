@@ -54,7 +54,8 @@ extern "C" {
 
 // Both send & receive can use the same buffering package type
 struct package_t {
-	uint8_t command, length, valid;
+	volatile uint8_t valid;
+	uint8_t command, length;
 	uint8_t data[BUFFER_SIZE];
 };
 
