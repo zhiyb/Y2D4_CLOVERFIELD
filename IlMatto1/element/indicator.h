@@ -8,10 +8,16 @@
 namespace indicator
 {
 	void init(void);
-	// Pooling for ping
-	void pool(bool detailed);
+
+	// Existence checking
+	void checkIlMatto2(bool detailed);
+	void checkRemote(bool detailed);
+
 	// String in PROGMEM
-	void refresh(uint16_t clr, const char *str);
+	void refresh(const uint16_t clr, const char *str);
+
+	// Colour picker display
+	void colourPicker(const uint16_t clr, uint8_t size, const bool refresh = true);
 }
 
 #endif

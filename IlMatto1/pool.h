@@ -1,11 +1,13 @@
 #ifndef POOL_H
 #define POOL_H
 
+#include <communication.h>
+
 namespace pool
 {
 	void init(void);
 	// Detailed indicator (ping check)
-	void pool(bool detailed);
+	package_t *pool(void);
 }
 
 #endif

@@ -40,7 +40,8 @@ struct package_t *uart0_txPackage(void);
 uint8_t uart0_ack(void);
 
 // Done with rx package
-void uart0_received(void);
+void uart0_done(struct package_t *pkg);
+//void uart0_received(void);
 // Check available rx package for read, 0 for none
 struct package_t *uart0_rxPackage(void);
 

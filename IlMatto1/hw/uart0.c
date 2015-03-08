@@ -135,7 +135,7 @@ disable:
 	DISABLE_UDREI();
 }
 
-void uart0_received(void)
+static void uart0_received(void)
 {
 	uint8_t current = rx.current;
 	struct package_t *pkg = rx.buffer + current;
@@ -150,6 +150,14 @@ void uart0_received(void)
 		pendingACK = 0;
 		ENABLE_UDREI();
 	}
+}
+
+void uart0_done(struct package_t *pkg)
+{
+	if (!pkg)
+		return;
+	pkg->valid = 0;
+	uart0_received();
 }
 
 struct package_t *uart0_rxPackage(void)

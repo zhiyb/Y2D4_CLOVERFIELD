@@ -27,7 +27,11 @@ namespace menu
 		namespace keypad {bool func(bool enter);}
 	}
 
-	namespace sketch {bool func(bool enter);}
+	namespace sketch
+	{
+		namespace single {bool func(bool enter);}
+		namespace shared {bool func(bool enter);}
+	}
 
 	namespace settings
 	{

@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	:= IlMatto1
-SRC	:= main.cpp pool.cpp
+SRC	:= main.cpp pool.cpp status.cpp
 SUBDIRS	:= hw menu element
 LIB	:= list rTouch common tft-cpp
 LIBDIR	:= ../lib
@@ -15,6 +15,7 @@ DEFS	+= -DF_CPU=12000000
 DEFS	+= -DTFT_VERTICALSCROLLING
 DEFS	+= -DRTOUCH_SWAPXY
 DEFS	+= -DRTOUCH_AVERAGER=32
+DEFS	+= -DRTOUCH_MOVETH=16
 DEFS	+= -DLIST_TOP_RESERVED=8
 LIBS	+= -lm
 INCS	+= -I../inc -I.

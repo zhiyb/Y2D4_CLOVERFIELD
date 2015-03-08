@@ -19,11 +19,12 @@ rTouch touch(&tft);
 PortraitList list(&tft);
 sketch_t sketch;
 keypad_t keypad;
+status_t status;
 
 void init(void)
 {
-	DDRB |= 0x80;			// LED
-	PORTB |= 0x80;
+	DDRB |= _BV(7);
+	PORTB |= _BV(7);		// LED
 
 	adc_init();
 	adc_enable();
@@ -60,7 +61,9 @@ int main(void)
 	list.display(&menu::root::item);
 
 	for (;;) {
-		pool::pool(true);
+		uart0_done(status.pool(pool::pool()));
+		status.checkIlMatto2();
+		indicator::checkIlMatto2(true);
 		list.pool(&touch);
 	}
 

@@ -1,25 +1,20 @@
 #include "indicator.h"
 #include "common.h"
 
-namespace indicator
-{
-	// Ping related
-	static volatile bool pingChk;
-	static void ping(void);
-	static void pingCheck(bool detailed);
-}
+#define STATUS_X	(0)
+#define STATUS_TEXT_W	(tft.width() - INDICATOR_SIZE - STATUS_X)
+#define COLOURPICKER_X	(INDICATOR_SIZE)
 
 void indicator::init(void)
 {
-	pingChk = false;
 }
 
-void indicator::refresh(uint16_t clr, const char *str)
+void indicator::refresh(const uint16_t clr, const char *str)
 {
-	tft.rectangle(0, 0, INDICATOR_SIZE, INDICATOR_SIZE, clr);
+	tft.rectangle(STATUS_X, 0, INDICATOR_SIZE, INDICATOR_SIZE, clr);
 	if (!str)
 		return;
-	tft.rectangle(INDICATOR_SIZE, 0, tft.width() - INDICATOR_SIZE, INDICATOR_SIZE, Black);
+	tft.rectangle(STATUS_X + INDICATOR_SIZE, 0, STATUS_TEXT_W, INDICATOR_SIZE, Black);
 	tft.setZoom(1);
 	tft.setForeground(clr);
 	tft.setBackground(Black);
@@ -27,40 +22,38 @@ void indicator::refresh(uint16_t clr, const char *str)
 	tft.putString(str, true);
 }
 
-static void indicator::ping(void)
+void indicator::colourPicker(const uint16_t clr, uint8_t size, const bool refresh)
 {
-	if (pingChk)
-		return;
-	PINB |= _BV(7);
-	package_t *pkg = uart0_txPackage();
-	if (!pkg) {
-		pingChk = false;
-		refresh(Magenta, PSTR("Pending tx package..."));
-		return;
-	}
-	pkg->command = COM_PING;
-	pkg->valid++;
-	uart0_send();
-	pingChk = true;
+	if (size > INDICATOR_SIZE)
+		size = INDICATOR_SIZE;
+	if (refresh)
+		tft.rectangle(COLOURPICKER_X, 0, INDICATOR_SIZE, INDICATOR_SIZE, Black);
+	tft.rectangle(COLOURPICKER_X + (INDICATOR_SIZE - size) / 2, (INDICATOR_SIZE - size) / 2, size, size, clr);
 }
 
-static void indicator::pingCheck(bool detailed)
+void indicator::checkIlMatto2(bool detailed)
 {
-	if (!pingChk)
+	if (tick() < TICK_PING_CHECK)
 		return;
-	if (uart0_ack())
-		refresh(Blue, detailed ? PSTR("") : 0);
-	else {
-		uart0_reset();
-		refresh(Red, detailed ? PSTR("Il Matto 2 not exist!") : 0);
-	}
-	pingChk = false;
+	if (!status.exist.IlMatto2Updated)
+		return;
+	if (status.exist.IlMatto2)
+		indicator::refresh(Blue, detailed ? PSTR("") : 0);
+	else
+		indicator::refresh(Red, detailed ? PSTR("Il Matto 2 not exist!") : 0);
 }
 
-void indicator::pool(bool detailed)
+void indicator::checkRemote(bool detailed)
 {
-	if (tick() <= 100)
-		ping();
-	else if (tick() >= 101)
-		pingCheck(detailed);
+	if (tick() < TICK_PING_REMOTE_CHECK)
+		return;
+	if (!status.exist.remoteUpdated)
+		return;
+	if (status.exist.IlMatto2) {
+		if (status.exist.remote)
+			indicator::refresh(Green, detailed ? PSTR("") : 0);
+		else
+			indicator::refresh(Blue, detailed ? PSTR("Remote not exist!") : 0);
+	} else
+		indicator::refresh(Red, detailed ? PSTR("Il Matto 2 not exist!") : 0);
 }

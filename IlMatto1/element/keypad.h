@@ -30,6 +30,12 @@ public:
 	// Arg: keep return pressing key, Ret: index of pressed key or KEYPAD_NA
 	uint8_t pool(bool keep = false, bool code = true);
 	bool testPool(void);
+	bool colourPicker(rTouch::coord_t pos, uint16_t &clr) const;
+	bool outside(const rTouch::coord_t pos) const;
+	bool outsideLeft(const int16_t x) const {return x < cal.pos.x;}
+	uint8_t keyAt(const rTouch::coord_t pos) const;
+	// Translate key index to key code
+	uint8_t translate(uint8_t idx);
 
 private:
 	// Convert index to coordinate relative to TOP-LEFT for DISPLAY
@@ -37,9 +43,6 @@ private:
 	void drawCross(const rTouch::coord_t pos, uint16_t c) const;
 	void drawKey(uint8_t idx, uint16_t clr = KEYPAD_DEF_CLR) const;
 	void drawKeypad(void) const;
-	uint8_t keyAt(const rTouch::coord_t pos) const;
-	// Translate key index to key code
-	uint8_t translate(uint8_t idx);
 
 	uint8_t prev, prevTest;
 	struct cal_t {

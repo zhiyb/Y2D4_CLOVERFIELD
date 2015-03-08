@@ -6,6 +6,11 @@
 
 namespace menu
 {
+	namespace sketch
+	{
+		void sketchMode(bool shared);
+	}
+
 	namespace diagnosis
 	{
 		static void packageTest(const char *name, uint8_t command, uint8_t length = 0, const uint8_t *data = 0);
@@ -56,8 +61,7 @@ pool:
 				printf("%u, ", *ptr++);
 		}
 		putchar('\n');
-		pkg->valid = 0;
-		uart0_received();
+		uart0_done(pkg);
 	}
 
 	if (uart0_ack()) {
@@ -130,17 +134,15 @@ bool menu::diagnosis::w_send::func(bool enter)
 	return false;
 }
 
-bool menu::sketch::func(bool enter)
+bool menu::sketch::single::func(bool enter)
 {
-	tft.vsNormal();
-	::sketch.init();
+	sketchMode(false);
+	return false;
+}
 
-	for (;;) {
-		pool::pool(false);
-		if (!::sketch.pool())
-			break;
-	}
-
+bool menu::sketch::shared::func(bool enter)
+{
+	sketchMode(true);
 	return false;
 }
 
@@ -158,13 +160,42 @@ bool menu::settings::keypadcal::func(bool enter)
 	return false;
 }
 
+// Pooling functions
+
+void menu::sketch::sketchMode(bool shared)
+{
+	tft.vsNormal();
+	::sketch.init();
+	::sketch.setShared(shared);
+
+	for (;;) {
+		uart0_done(::sketch.pool(status.pool(pool::pool())));
+
+		if (shared) {
+			status.checkRemote();
+			indicator::checkRemote(false);
+		} else {
+			status.checkIlMatto2();
+			indicator::checkIlMatto2(false);
+		}
+
+		if (touch.pressed()) {
+			rTouch::coord_t pos = touch.position();
+			if (keypad.outsideLeft(pos.x + 10))
+				break;
+		}
+	}
+}
+
 bool menu::diagnosis::keypad::func(bool enter)
 {
 	tft.vsNormal();
 	::keypad.display();
 
 	for (;;) {
-		::pool::pool(false);
+		uart0_done(status.pool(::pool::pool()));
+		status.checkIlMatto2();
+		indicator::checkIlMatto2(true);
 		if (!::keypad.testPool())
 			break;
 	}

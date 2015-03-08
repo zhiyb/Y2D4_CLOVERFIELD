@@ -1,4 +1,5 @@
 #include <eemem.h>
+#include <rgbconv.h>
 #include "keypad.h"
 #include "common.h"
 
@@ -126,7 +127,7 @@ void keypad_t::drawKeypad(void) const
 
 uint8_t keypad_t::keyAt(const rTouch::coord_t pos) const
 {
-	if (pos.x < cal.pos.x || pos.y < cal.pos.y || pos.x >= cal.pos.x + cal.size.x || pos.y >= cal.pos.y + cal.size.y)
+	if (outside(pos))
 		return KEYPAD_NA;
 	return (pos.y - cal.pos.y) * KEYPAD_SIZE_Y / cal.size.y * KEYPAD_SIZE_X + (pos.x - cal.pos.x) * KEYPAD_SIZE_X / cal.size.x;
 }
@@ -153,6 +154,7 @@ bool keypad_t::testPool(void)
 			prevTest = prev = KEYPAD_NA;
 			return false;
 		}
+	tft.setZoom(2);
 	uint8_t idx = pool(true, false);
 	if (idx != prevTest) {
 		if (prevTest != KEYPAD_NA)
@@ -166,5 +168,59 @@ bool keypad_t::testPool(void)
 			tft << " ";
 	}
 	prevTest = idx;
+	return true;
+}
+
+bool keypad_t::outside(const rTouch::coord_t pos) const
+{
+	return pos.x < cal.pos.x || pos.y < cal.pos.y || \
+		pos.x >= cal.pos.x + cal.size.x || pos.y >= cal.pos.y + cal.size.y;
+}
+
+bool keypad_t::colourPicker(rTouch::coord_t pos, uint16_t &clr) const
+{
+	if (outside(pos))
+		return false;
+	uint8_t red = 0, green = 0, blue = 0;
+	uint16_t y = (uint32_t)(pos.y - cal.pos.y) * 6 * 256 / (uint32_t)cal.size.y;
+	uint8_t c = y % 256, reg = y / 256;
+	switch (reg) {
+	case 0:
+		red = 0xFF;
+		green = c;
+		break;
+	case 1:
+		red = 0xFF - c;
+		green = 0xFF;
+		break;
+	case 2:
+		green = 0xFF;
+		blue = c;
+		break;
+	case 3:
+		green = 0xFF - c;
+		blue = 0xFF;
+		break;
+	case 4:
+		red = c;
+		blue = 0xFF;
+		break;
+	case 5:
+		red = 0xFF;
+		blue = 0xFF - c;
+		break;
+	}
+	uint16_t x = (uint32_t)(pos.x - cal.pos.x) * 2 * 256 / (uint32_t)cal.size.x;
+	if (x / 256 == 0) {
+		red = (uint16_t)red * x / 256;
+		green = (uint16_t)green * x / 256;
+		blue = (uint16_t)blue * x / 256;
+	} else {
+		x %= 256;
+		red += (uint16_t)(0xFF - red) * x / 256;
+		green += (uint16_t)(0xFF - green) * x / 256;
+		blue += (uint16_t)(0xFF - blue) * x / 256;
+	}
+	clr = conv::c32to16(conv::c32(red, green, blue));
 	return true;
 }
