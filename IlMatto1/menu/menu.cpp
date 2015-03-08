@@ -36,6 +36,12 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
+	namespace pool_quiet
+	{
+		static const char PROGMEM name[] = "Quiet pooling";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	namespace pool
 	{
 		static const char PROGMEM name[] = "Pooling";
@@ -84,6 +90,12 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
+	namespace w_data
+	{
+		static const char PROGMEM name[] = "W: Lots of data";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	namespace keypad
 	{
 		static const char PROGMEM name[] = "Test keypad";
@@ -97,10 +109,10 @@ namespace diagnosis
 	};
 	using namespace misc;
 	static const listItem *items[] = {
-		&reset::item, &pool::item,
+		&reset::item, &pool_quiet::item, &pool::item,
 		&ping::item, &wakeup::item, &suspend::item,
 		&w_ping::item, &w_sound::item, &w_sound_end::item,
-		&w_send::item,
+		&w_send::item, &w_data::item,
 		&keypad::item, &toggle::item, &item_03, &item_04, 0
 	};
 	static listItem item = {name, icon, items, 0};

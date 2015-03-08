@@ -11,14 +11,16 @@ class sketch_t
 {
 public:
 	void init(void);
-	package_t *pool(package_t *pkg);
+	volatile package_t *pool(volatile package_t *pkg);
 	void setShared(bool s) {sh = s;}
 	bool shared(void) const {return sh;}
 
 private:
 	void clean(void);
-	bool packageHandle(package_t *pkg);
+	bool packageHandle(volatile package_t *pkg);
 	void sendPackage(void);
+	void sendCleanPackage(void);
+	void writeBuffer(uint16_t x, uint16_t y);
 
 	union buffer_t {
 		uint8_t d[BUFFER_SIZE];

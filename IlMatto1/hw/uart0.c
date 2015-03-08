@@ -10,7 +10,7 @@
 #define DISABLE_RXCI()	UCSR0B &= ~_BV(RXCIE0)
 
 static uint8_t ack, pendingACK;
-static volatile uint8_t ackRecv;
+volatile static uint8_t ackRecv;
 
 static struct buffer_t {
 	struct package_t buffer[2];
@@ -62,13 +62,14 @@ void uart0_send(void)
 	ENABLE_UDREI();
 }
 
+#include <util/delay.h>
 struct package_t *uart0_txPackage(void)
 {
 	uint8_t current = tx.current;
-	struct package_t *pkg = tx.buffer + current;
+	struct package_t *pkg = &tx.buffer[current];
 	if (!pkg->valid)
 		return pkg;
-	pkg = tx.buffer + (1 - current);
+	pkg = &tx.buffer[1 - current];
 	if (!pkg->valid)
 		return pkg;
 	return 0;
@@ -91,11 +92,13 @@ ISR(USART0_UDRE_vect)
 		goto sending;
 
 	// ACK request?
-	if (ack) {
+	while (ack) {
+		ack--;
 		WRITE(COM_ACK);
-		ack = 0;
-		return;
 	}
+
+	if (tx.status == UART0_TX_WAITING)
+		goto disable;
 
 	// Current buffer valid?
 	if (!pkg->valid)
@@ -124,12 +127,11 @@ sending:
 			goto complete;
 		tx.status = UART0_TX_DATA;
 		return;
-	case UART0_TX_SENDING:
-		goto disable;
 	}
 
 complete:
-	tx.status = UART0_TX_SENDING;	// Waiting for ACK
+	tx.status = UART0_TX_WAITING;	// Waiting for ACK
+	PORTB |= _BV(6);
 
 disable:
 	DISABLE_UDREI();
@@ -147,7 +149,7 @@ static void uart0_received(void)
 	}
 	if (pendingACK) {
 		ack++;
-		pendingACK = 0;
+		pendingACK--;
 		ENABLE_UDREI();
 	}
 }
@@ -181,6 +183,7 @@ ISR(USART0_RX_vect)
 
 	uint8_t c = READ();
 	if (c == COM_ACK) {
+		PORTB &= ~_BV(6);
 		current = tx.current;
 		(tx.buffer + current)->valid = 0;
 		tx.current = 1 - current;
@@ -221,7 +224,7 @@ complete:
 	rx.current = current = 1 - current;
 
 	pkg = rx.buffer + current;
-	if (!pkg->valid) {
+	if (!pkg->valid) {	// Can receive another package
 		ack++;
 		ENABLE_UDREI();
 	} else

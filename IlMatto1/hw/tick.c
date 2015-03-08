@@ -24,6 +24,6 @@ uint16_t tick(void)
 
 ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
 {
-	if (++tk == 1000)
+	if (++tk == TICK_CYCLE)
 		tk = 0;
 }

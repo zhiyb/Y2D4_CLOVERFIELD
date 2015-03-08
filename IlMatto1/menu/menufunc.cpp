@@ -34,7 +34,7 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t len
 	tft.clean();
 
 	puts_P(PSTR("*** Il Matto1 testing ***"));
-	struct package_t *pkg;
+	volatile struct package_t *pkg;
 	if (!command)
 		goto pool;
 
@@ -49,22 +49,30 @@ void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t len
 	uart0_send();
 
 pool:
-	pkg = uart0_rxPackage();
+	if (!name) {
+		pkg = status.pool(::pool::pool());
+
+		status.checkRemote();
+		indicator::checkRemote(false);
+	} else
+		pkg = uart0_rxPackage();
 	if (pkg) {
-		tft.setForeground(Green);
-		printf("Package received: ");
-		printf("C/%u", pkg->command);
-		if (pkg->command & COM_DATA) {
-			printf(", L/%u, \n", pkg->length);
-			uint8_t *ptr = pkg->data;
-			for (uint8_t i = 0; i < pkg->length; i++)
-				printf("%u, ", *ptr++);
+		if (name) {
+			tft.setForeground(Green);
+			printf("Package received: ");
+			printf("C/%u", pkg->command);
+			if (pkg->command & COM_DATA) {
+				printf(", L/%u, \n", pkg->length);
+				volatile uint8_t *ptr = pkg->data;
+				for (uint8_t i = 0; i < pkg->length; i++)
+					printf("%u, ", *ptr++);
+			}
+			putchar('\n');
 		}
-		putchar('\n');
 		uart0_done(pkg);
 	}
 
-	if (uart0_ack()) {
+	if (name && uart0_ack()) {
 		tft.setForeground(Yellow);
 		puts("ACK received.");
 	}
@@ -83,9 +91,15 @@ bool menu::diagnosis::reset::func(bool enter)
 	return false;
 }
 
-bool menu::diagnosis::pool::func(bool enter)
+bool menu::diagnosis::pool_quiet::func(bool enter)
 {
 	packageTest(0, 0);
+	return false;
+}
+
+bool menu::diagnosis::pool::func(bool enter)
+{
+	packageTest(PSTR(""), 0);
 	return false;
 }
 
@@ -131,6 +145,39 @@ bool menu::diagnosis::w_send::func(bool enter)
 	for (uint8_t i = 0; i < BUFFER_SIZE; i++)
 		data[i] = i;
 	packageTest(PSTR("Sending test data..."), COM_W_SEND, BUFFER_SIZE, data);
+	return false;
+}
+
+bool menu::diagnosis::w_data::func(bool enter)
+{
+	uint8_t data[BUFFER_SIZE];
+	for (uint8_t i = 0; i < BUFFER_SIZE; i++)
+		data[i] = i;
+
+	tft.vsNormal();
+	tft.setForeground(0x667F);
+	tft.setBackground(Black);
+	tft.setZoom(1);
+	tft.clean();
+
+	puts_P(PSTR("*** Il Matto1 testing ***"));
+	volatile struct package_t *pkg;
+
+	for (uint8_t i = 0; i < 10; i++) {
+		puts_P(PSTR("Alloc tx package..."));
+		while (!(pkg = uart0_txPackage()));
+		puts_P(PSTR("Send package..."));
+		pkg->command = COM_W_SEND;
+		pkg->length = BUFFER_SIZE - i;
+		for (uint8_t i = 0; i < BUFFER_SIZE; i++)
+			pkg->data[i] = *(data + i);
+		pkg->valid++;
+		uart0_send();
+	}
+
+	puts_P(PSTR("Done."));
+	touch.waitForPress();
+
 	return false;
 }
 

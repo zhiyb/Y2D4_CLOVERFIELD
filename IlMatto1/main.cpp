@@ -23,7 +23,7 @@ status_t status;
 
 void init(void)
 {
-	DDRB |= _BV(7);
+	DDRB |= _BV(7) | _BV(6);
 	PORTB |= _BV(7);		// LED
 
 	adc_init();

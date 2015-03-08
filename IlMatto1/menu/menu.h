@@ -13,6 +13,7 @@ namespace menu
 	namespace diagnosis
 	{
 		namespace reset {bool func(bool enter);}
+		namespace pool_quiet {bool func(bool enter);}
 		namespace pool {bool func(bool enter);}
 
 		namespace ping {bool func(bool enter);}
@@ -23,6 +24,7 @@ namespace menu
 		namespace w_sound {bool func(bool enter);}
 		namespace w_sound_end {bool func(bool enter);}
 		namespace w_send {bool func(bool enter);}
+		namespace w_data {bool func(bool enter);}
 
 		namespace keypad {bool func(bool enter);}
 	}

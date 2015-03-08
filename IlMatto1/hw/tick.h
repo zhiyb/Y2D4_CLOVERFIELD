@@ -7,6 +7,8 @@ extern "C" {
 
 #include <inttypes.h>
 
+#define TICK_CYCLE	1000
+
 // Using timer 1
 void tick_init(void);
 uint16_t tick(void);

@@ -13,7 +13,7 @@ void status_t::ping(uint8_t cmd)
 	if (pingChk)
 		return;
 	PINB |= _BV(7);
-	package_t *pkg = uart0_txPackage();
+	volatile package_t *pkg = uart0_txPackage();
 	if (!pkg) {
 		pingChk = false;
 		return;
@@ -53,7 +53,7 @@ void status_t::pingRemoteCheck(void)
 	pingChk = false;
 }
 
-package_t *status_t::pool(package_t *pkg)
+volatile package_t *status_t::pool(volatile package_t *pkg)
 {
 	if (!pkg)
 		return 0;
