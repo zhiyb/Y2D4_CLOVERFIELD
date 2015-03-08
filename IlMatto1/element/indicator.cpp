@@ -1,3 +1,7 @@
+/*
+ *  Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include "indicator.h"
 #include "common.h"
 

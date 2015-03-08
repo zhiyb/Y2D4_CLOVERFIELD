@@ -1,3 +1,7 @@
+/*
+ *  Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #ifndef KEYPAD_H
 #define KEYPAD_H
 

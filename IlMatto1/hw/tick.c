@@ -1,3 +1,7 @@
+/*
+ *  Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "tick.h"
