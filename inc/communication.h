@@ -14,8 +14,6 @@ extern "C" {
 
 // Response
 #define COM_ACK		0
-// End of variable length response / command failed
-#define COM_END		0xFF
 
 // From Il Matto 1
 
@@ -25,7 +23,12 @@ extern "C" {
 // Variable length data (length byte & data)
 #define COM_DATA	0x80
 
-// Data structure: Command, Data
+// Data structure: Command [length data]
+// Command without COM_DATA mask indicates no length & data
+// Command with COM_DATA mask can have data with length <= BUFFER_SIZE
+// Acknowledge COM_ACK after entire command sequence
+
+// General operations
 // No data, response {COM_ACK} indicates IlMatto2 exist
 #define COM_PING	1
 // Wakeup wireless module
@@ -34,23 +37,23 @@ extern "C" {
 #define COM_SUSPEND	3
 
 // Wireless connection operations
-// Ping for other end, no data
+// Ping for other end
 #define COM_W_PING	4
-// Ping success reply
+// Ping succeed reply
 #define COM_W_PING_SU	5
 // Ping timeout reply
 #define COM_W_PING_TO	6
-// Timeout for remote ping, unit: ms
+// Suggested timeout for remote ping, unit: ms
 #define COM_W_PING_TIMEOUT	100
-// Start sending & receiving sound data, no data
-#define COM_W_SOUND	7
-// Stop sending & receiving sound data, no data
-#define COM_W_SOUND_END	8
-// Send data to other end, data {Length(1 byte), Data}
-#define COM_W_SEND	(COM_DATA | 20)
 
-// Data received, data {Length(1 byte), Data}
-#define COM_W_RECV	(COM_DATA | 21)
+// Start sending & receiving audio data
+#define COM_W_AUDIO	7
+// Stop sending & receiving audio data
+#define COM_W_AUDIO_END	8
+// Send data to other end
+#define COM_W_SEND	(COM_DATA | 10)
+// Data received
+#define COM_W_RECV	(COM_DATA | 10)
 
 // Both send & receive can use the same buffering package type
 struct package_t {
