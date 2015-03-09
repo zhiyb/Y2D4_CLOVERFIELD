@@ -14,10 +14,12 @@
 #include "keypad.h"
 #include "status.h"
 #include "indicator.h"
+#include "notification.h"
 #include "pin.h"
 #include "uart0.h"
 #include "tick.h"
 #include "package.h"
+#include "pool.h"
 
 #define TICK_CLEAR		0
 #define TICK_PING		10
@@ -34,5 +36,6 @@ extern sketch_t sketch;
 extern keypad_t keypad;
 extern status_t status;
 extern pin_t pin;
+extern notification_t notification;
 
 #endif

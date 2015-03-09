@@ -22,6 +22,9 @@ public:
 		bool remote;
 		bool remoteUpdated;
 	} exist;
+	struct {
+		bool refresh;
+	} request;
 
 private:
 	bool pingChk;

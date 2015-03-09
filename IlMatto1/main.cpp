@@ -21,6 +21,7 @@ sketch_t sketch;
 keypad_t keypad;
 status_t status;
 pin_t pin;
+notification_t notification;
 
 void init(void)
 {
@@ -39,6 +40,7 @@ void init(void)
 	tft.clean();
 
 	stdout = tftout(&tft);
+	notification.init();
 	touch.init();
 	keypad.init();
 	sei();
@@ -64,12 +66,8 @@ int main(void)
 	list.setRootItem(&menu::root::item);
 	list.display(&menu::root::item);
 
-	for (;;) {
-		uart0_done(status.pool(pool::pool()));
-		status.checkIlMatto2();
-		indicator::checkIlMatto2(true);
-		list.pool(&touch);
-	}
+	for (;;)
+		pool::list();
 
 	return 1;
 }

@@ -28,7 +28,7 @@ bool sketch_t::packageHandle(package_t *pkg)
 {
 	if (!pkg || (pkg->command != COM_W_RECV && pkg->command != COM_W_SEND))
 		return false;
-	buffer_t *buf = (buffer_t *)pkg->data;
+	pkgSketch_t *buf = (pkgSketch_t *)pkg->data;
 	if (buf->s.type != PKG_TYPE_SKETCH && buf->s.type != PKG_TYPE_SKETCH_CLEAN)
 		return false;
 	if (buf->s.type == PKG_TYPE_SKETCH_CLEAN) {

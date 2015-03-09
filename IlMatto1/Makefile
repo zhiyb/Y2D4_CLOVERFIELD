@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	:= IlMatto1
-SRC	:= main.cpp pool.cpp status.cpp
+SRC	:= main.cpp pool.cpp status.cpp operator.cpp
 SUBDIRS	:= hw menu element
 LIB	:= list rTouch common tft-cpp
 LIBDIR	:= ../lib

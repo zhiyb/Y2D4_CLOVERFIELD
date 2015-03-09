@@ -10,6 +10,7 @@ void status_t::init(void)
 	pingChk = false;
 	exist.IlMatto2 = false;
 	exist.remote = false;
+	request.refresh = false;
 }
 
 void status_t::ping(uint8_t cmd)

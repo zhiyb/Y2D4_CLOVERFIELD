@@ -190,7 +190,8 @@ bool menu::sketch::single::func(bool enter)
 bool menu::sketch::shared::func(bool enter)
 {
 	tft.vsNormal();
-	pool::sketch(true);
+	if (pool::sendRequest(PKG_REQUEST_SKETCH))
+		pool::sketch(true);
 	return false;
 }
 

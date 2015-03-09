@@ -14,10 +14,11 @@ namespace pool
 
 	void pinLock(void);
 	void pinSet(void);
-
 	void sketch(bool shared);
-
 	void testKeypad(void);
+	void list(void);
+	void request(uint8_t req);
+	bool sendRequest(uint8_t req);
 }
 
 #endif

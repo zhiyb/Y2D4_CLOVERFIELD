@@ -8,8 +8,7 @@
 #include <tft.h>
 #include <rtouch.h>
 #include <communication.h>
-
-#define PKG_SKETCH_PREPEND	4
+#include "package.h"
 
 class sketch_t
 {
@@ -26,15 +25,7 @@ private:
 	void sendCleanPackage(void);
 	void writeBuffer(uint16_t x, uint16_t y);
 
-	union buffer_t {
-		uint8_t d[BUFFER_SIZE];
-		struct {
-			uint8_t type;
-			uint8_t size;
-			uint16_t clr;
-			uint16_t pos[BUFFER_SIZE - PKG_SKETCH_PREPEND][2];
-		} s;
-	} buffer;
+	pkgSketch_t buffer;
 	uint8_t bufferSize;
 
 	rTouch::coord_t prev;
