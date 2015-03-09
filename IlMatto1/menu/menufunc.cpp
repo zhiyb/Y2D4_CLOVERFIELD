@@ -250,12 +250,22 @@ bool menu::diagnosis::keypad::func(bool enter)
 bool menu::diagnosis::text::func(bool enter)
 {
 	tft.vsNormal();
-	::pool::textInput(PSTR("Text input\n"));
+	char str[PKG_TEXT_LENGTH];
+	::pool::textInput(PSTR("Text input\n"), str);
 
 	return false;
 }
 
 bool menu::game::tictactoe::func(bool enter)
 {
+	return false;
+}
+
+bool menu::text::func(bool enter)
+{
+	tft.vsNormal();
+	char str[PKG_TEXT_LENGTH];
+	if (pool::textInput(PSTR("Write message:\n"), str) && *str)
+		pool::sendMessage(str);
 	return false;
 }

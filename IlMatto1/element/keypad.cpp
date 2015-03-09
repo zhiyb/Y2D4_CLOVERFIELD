@@ -52,9 +52,9 @@ const char keypad_t::PGMkeyText[KEYPAD_SIZE - 1][5] PROGMEM = {
 	{'7', 'p', 'q', 'r', 's',},	// 7
 	{'8', 't', 'u', 'v', '_',},	// 8
 	{'9', 'w', 'x', 'y', 'z',},	// 9
-	{' ', '\'', '/', '"', '\\',},	// A
-	{' ', '+', '*', '-', '=',},	// B
-	{' ', '(', '[', ')', ']',},	// C
+	{(char)(uint8_t)128, '\'', '/', '"', '\\',},	// A
+	{(char)(uint8_t)129, '+', '*', '-', '=',},	// B
+	{(char)(uint8_t)130, '(', '[', ')', ']',},	// C
 	{' ', '{', '<', '}', '>',},	// D
 	{' ', '|', '`', '^', ' ',},	// E
 };
@@ -258,7 +258,6 @@ char keypad_t::text(void)
 		if (prev == 0) {
 			first = pos;
 			index = translate(keyAt(pos));
-			index = KEYPAD_NA;
 			prev = 1;
 		}
 		prevCoord = pos;
@@ -280,7 +279,9 @@ char keypad_t::text(void)
 					dir = 4;
 			}
 		}
-		return pgm_read_byte(&PGMkeyText[index][dir - 1]);
+		if (index == 0x0F)
+			return (uint8_t)-2;
+		return pgm_read_byte(&PGMkeyText[index][dir]);
 	}
 	return -1;
 }

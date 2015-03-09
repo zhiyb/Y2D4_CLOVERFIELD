@@ -16,11 +16,14 @@ namespace pool
 	void pinSet(void);
 	void sketch(bool shared);
 	void testKeypad(void);
-	void textInput(const char *str);
+	bool textInput(const char *str, char *buf);
 	void list(void);
 	void request(uint8_t req);
 	bool sendRequest(uint8_t req);
 	void audio(void);
+	void message(const char *str);
+	void sendMessage(const char *str);
+	void tictactoe(void);
 }
 
 #endif

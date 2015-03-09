@@ -223,7 +223,6 @@ reject:
 		else if (pressed)
 			return false;
 	}
-
 	return false;
 
 close:
@@ -288,7 +287,7 @@ ret:
 	}
 }
 
-void pool::textInput(const char *str)
+bool pool::textInput(const char *str, char *buf)
 {
 	tft.setBackground(Black);
 	tft.setForeground(0x667F);
@@ -297,16 +296,83 @@ void pool::textInput(const char *str)
 	tft.putString(str, true);
 	keypad.initText();
 
+	uint8_t len = 0;
 	for (;;) {
 		uart0_done(notification.pool(status.pool(::pool::pool())));
 		if (touch.pressed()) {
 			rTouch::coord_t pos = touch.position();
-			if (pos.x >= 0)
-				break;
+			if (pos.x >= 0) {
+				*buf = 0;
+				return true;
+			}
 		}
 		char c = keypad.text();
-		if (c != -1)
-			tft << c;
+		if (c != -1) {
+			if (c == -2) {
+				if (len) {
+					buf--;
+					len--;
+					if (tft.x())
+						tft.setX(tft.x() - FONT_WIDTH * 2);
+					else {
+						tft.setX(tft.width() - FONT_WIDTH * 2);
+						tft.setY(tft.y() - FONT_HEIGHT * 2);
+					}
+					tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, Black);
+				}
+			} else if (len != PKG_TEXT_LENGTH - 2) {
+				tft << c;
+				*buf++ = c;
+				len++;
+			}
+		}
 		while (notification.show());
 	}
+	return false;
+}
+
+void pool::message(const char *str)
+{
+	notification.displayMessage(str);
+	status.request.refresh = true;
+
+	for (;;) {
+		uart0_done(notification.pool(status.pool(::pool::pool())));
+		status.checkIlMatto2();
+		indicator::checkIlMatto2(true);
+		if (notification.messagePool())
+			break;
+		if (touch.pressed()) {
+			rTouch::coord_t pos = touch.position();
+			if (keypad.outsideLeft(pos.x + 10))
+				break;
+		}
+	}
+}
+
+void pool::sendMessage(const char *str)
+{
+	tft.putString(PSTR("\nSending message..."), true);
+
+	bool pressed = false;
+	uint8_t idx = notification.messageIndex();
+	uint16_t t = tick();
+	for (;;) {
+		if (t == tick()) {
+			notification.sendMessage(idx, str);
+			if (!t--)
+				t = TICK_CYCLE;
+		}
+		uart0_done(notification.pool(status.pool(::pool::pool())));
+		if (notification.messageAck(idx))
+			break;
+		if (touch.pressed())
+			pressed = true;
+		else if (pressed)
+			break;
+	}
+}
+
+void pool::tictactoe(void)
+{
 }

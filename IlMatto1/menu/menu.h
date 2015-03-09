@@ -44,6 +44,8 @@ namespace menu
 		namespace shared {bool func(bool enter);}
 	}
 
+	namespace text {bool func(bool enter);}
+
 	namespace game
 	{
 		namespace tictactoe {bool func(bool enter);}
