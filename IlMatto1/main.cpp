@@ -20,6 +20,7 @@ PortraitList list(&tft);
 sketch_t sketch;
 keypad_t keypad;
 status_t status;
+pin_t pin;
 
 void init(void)
 {
@@ -45,6 +46,10 @@ void init(void)
 	tft.setBGLight(true);
 	touch.calibrate();
 	keypad.calibrate();
+	if (!pin.init())
+		pool::pinSet();
+	else
+		pool::pinLock();
 	eeprom_first_done();
 }
 

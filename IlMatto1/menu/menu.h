@@ -25,8 +25,8 @@ namespace menu
 		namespace suspend {bool func(bool enter);}
 
 		namespace w_ping {bool func(bool enter);}
-		namespace w_sound {bool func(bool enter);}
-		namespace w_sound_end {bool func(bool enter);}
+		namespace w_audio_tx {bool func(bool enter);}
+		namespace w_audio_stop {bool func(bool enter);}
 		namespace w_send {bool func(bool enter);}
 		namespace w_data {bool func(bool enter);}
 
@@ -41,6 +41,8 @@ namespace menu
 
 	namespace settings
 	{
+		namespace frequency {bool func(bool enter);}
+		namespace reset_pin {bool func(bool enter);}
 		namespace calibration {bool func(bool enter);}
 		namespace keypadcal {bool func(bool enter);}
 	}

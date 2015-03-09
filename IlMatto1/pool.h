@@ -11,6 +11,13 @@ namespace pool
 {
 	// Package fetch & basic pool
 	package_t *pool(void);
+
+	void pinLock(void);
+	void pinSet(void);
+
+	void sketch(bool shared);
+
+	void testKeypad(void);
 }
 
 #endif

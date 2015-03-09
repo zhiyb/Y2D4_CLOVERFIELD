@@ -148,7 +148,7 @@ uint8_t keypad_t::pool(bool keep, bool code)
 		idx = KEYPAD_NA;
 ret:
 	prev = idx;
-	return code ? translate(idx) : idx;
+	return code ? (idx == KEYPAD_NA ? KEYPAD_NA : translate(idx)) : idx;
 }
 
 bool keypad_t::testPool(void)

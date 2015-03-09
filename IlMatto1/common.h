@@ -14,6 +14,7 @@
 #include "keypad.h"
 #include "status.h"
 #include "indicator.h"
+#include "pin.h"
 #include "uart0.h"
 #include "tick.h"
 #include "package.h"
@@ -32,5 +33,6 @@ extern PortraitList list;
 extern sketch_t sketch;
 extern keypad_t keypad;
 extern status_t status;
+extern pin_t pin;
 
 #endif

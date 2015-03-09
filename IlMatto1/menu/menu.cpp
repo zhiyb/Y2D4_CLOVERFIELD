@@ -68,15 +68,15 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
-	namespace w_sound
+	namespace w_audio_tx
 	{
-		static const char PROGMEM name[] = "W: Sound";
+		static const char PROGMEM name[] = "W: Audio TX";
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
-	namespace w_sound_end
+	namespace w_audio_stop
 	{
-		static const char PROGMEM name[] = "W: Sound end";
+		static const char PROGMEM name[] = "W: Audio stop";
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
@@ -107,7 +107,7 @@ namespace diagnosis
 	static const listItem *items[] = {
 		&reset::item, &pool_quiet::item, &pool::item,
 		&ping::item, &wakeup::item, &suspend::item,
-		&w_ping::item, &w_sound::item, &w_sound_end::item,
+		&w_ping::item, &w_audio_tx::item, &w_audio_stop::item,
 		&w_send::item, &w_data::item,
 		&keypad::item, &toggle::item, 0
 	};
@@ -158,6 +158,18 @@ namespace game
 
 namespace settings
 {
+	namespace frequency
+	{
+		static const char PROGMEM name[] = "Frequency";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
+	namespace reset_pin
+	{
+		static const char PROGMEM name[] = "Reset PIN";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	namespace calibration
 	{
 		static const char PROGMEM name[] = "Calibration";
@@ -175,7 +187,7 @@ namespace settings
 		0x03,0xC0,0x12,0x48,0x2A,0x54,0x46,0x62,0x20,0x04,0x10,0x08,0xF1,0x8F,0x82,0x41,
 		0x82,0x41,0xF1,0x8F,0x10,0x08,0x20,0x04,0x46,0x62,0x2A,0x54,0x12,0x48,0x03,0xC0,
 	};
-	static const listItem *items[] = {&calibration::item, &keypadcal::item, 0};
+	static const listItem *items[] = {&frequency::item, &reset_pin::item, &calibration::item, &keypadcal::item, 0};
 	static listItem item = {name, icon, items, 0};
 }
 

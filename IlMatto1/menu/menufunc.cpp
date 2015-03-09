@@ -10,11 +10,6 @@
 
 namespace menu
 {
-	namespace sketch
-	{
-		void sketchMode(bool shared);
-	}
-
 	namespace diagnosis
 	{
 		static void packageTest(const char *name, uint8_t command, uint8_t length = 0, const uint8_t *data = 0);
@@ -131,13 +126,13 @@ bool menu::diagnosis::w_ping::func(bool enter)
 	return false;
 }
 
-bool menu::diagnosis::w_sound::func(bool enter)
+bool menu::diagnosis::w_audio_tx::func(bool enter)
 {
-	packageTest(PSTR("Enabling audio transceiver..."), COM_W_AUDIO);
+	packageTest(PSTR("Enabling audio TX..."), COM_W_AUDIO_TX);
 	return false;
 }
 
-bool menu::diagnosis::w_sound_end::func(bool enter)
+bool menu::diagnosis::w_audio_stop::func(bool enter)
 {
 	packageTest(PSTR("Disabling audio transceiver..."), COM_W_AUDIO_END);
 	return false;
@@ -187,13 +182,23 @@ bool menu::diagnosis::w_data::func(bool enter)
 
 bool menu::sketch::single::func(bool enter)
 {
-	sketchMode(false);
+	tft.vsNormal();
+	pool::sketch(false);
 	return false;
 }
 
 bool menu::sketch::shared::func(bool enter)
 {
-	sketchMode(true);
+	tft.vsNormal();
+	pool::sketch(true);
+	return false;
+}
+
+bool menu::settings::reset_pin::func(bool enter)
+{
+	tft.vsNormal();
+	pool::pinLock();
+	pool::pinSet();
 	return false;
 }
 
@@ -211,45 +216,17 @@ bool menu::settings::keypadcal::func(bool enter)
 	return false;
 }
 
-// Pooling functions
-
-void menu::sketch::sketchMode(bool shared)
+bool menu::settings::frequency::func(bool enter)
 {
-	tft.vsNormal();
-	::sketch.init();
-	::sketch.setShared(shared);
-
-	for (;;) {
-		uart0_done(::sketch.pool(status.pool(pool::pool())));
-
-		if (shared) {
-			status.checkRemote();
-			indicator::checkRemote(false);
-		} else {
-			status.checkIlMatto2();
-			indicator::checkIlMatto2(false);
-		}
-
-		if (touch.pressed()) {
-			rTouch::coord_t pos = touch.position();
-			if (keypad.outsideLeft(pos.x + 10))
-				break;
-		}
-	}
+	//tft.vsNormal();
+	//keypad.recalibrate();
+	return false;
 }
 
 bool menu::diagnosis::keypad::func(bool enter)
 {
 	tft.vsNormal();
-	::keypad.display();
-
-	for (;;) {
-		uart0_done(status.pool(::pool::pool()));
-		status.checkIlMatto2();
-		indicator::checkIlMatto2(true);
-		if (!::keypad.testPool())
-			break;
-	}
+	::pool::testKeypad();
 
 	return false;
 }
