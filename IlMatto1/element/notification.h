@@ -26,6 +26,7 @@ private:
 
 	void pushRequest(pkgRequest_t *req);
 	request_t *popRequest(void);
+	void removeRequests(uint8_t req);
 
 	uint16_t reqSize;
 	uint8_t reqAck, reqType;

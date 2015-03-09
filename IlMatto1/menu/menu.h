@@ -14,6 +14,8 @@ namespace menu
 {
 	namespace toggle {bool func(bool enter);}
 
+	namespace lock {bool func(bool enter);}
+
 	namespace diagnosis
 	{
 		namespace reset {bool func(bool enter);}

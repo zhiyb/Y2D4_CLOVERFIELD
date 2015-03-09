@@ -17,6 +17,7 @@
 #define PKG_REQUEST_ACCEPT	0
 #define PKG_REQUEST_REJECT	1
 #define PKG_REQUEST_RECEIVED	2
+#define PKG_REQUEST_CLOSED	3
 #define PKG_REQUEST_INVALID	0xFF
 
 extern const char *requestName[1];

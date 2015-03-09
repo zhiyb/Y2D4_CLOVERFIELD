@@ -24,6 +24,14 @@ namespace toggle
 	static listItem item = {name, misc::icon_test, 0, func};
 }
 
+namespace lock
+{
+	static const char PROGMEM name[] = "Lock";
+	//static const uint8_t PROGMEM icon[] = {
+	//};
+	static listItem item = {name, misc::icon_test, 0, func};
+}
+
 namespace diagnosis
 {
 	namespace reset
@@ -209,7 +217,7 @@ namespace root
 		0x00,0x00,0x07,0xE0,0x0F,0xF0,0x1F,0xF8,0x3F,0xFC,0x7F,0xFE,0x7E,0x7E,0x7C,0x3E,
 		0x7C,0x3E,0x7E,0x7E,0x7F,0xFE,0x3F,0xFC,0x1F,0xF8,0x0F,0xF0,0x07,0xE0,0x00,0x00,
 	};
-	static const listItem *items[] = {&diagnosis::item, &sketch::item, &game::item, &settings::item, &help::item, 0};
+	static const listItem *items[] = {&lock::item, &sketch::item, &game::item, &settings::item, &help::item, &diagnosis::item, 0};
 	listItem item = {name, icon, items, 0};
 }
 

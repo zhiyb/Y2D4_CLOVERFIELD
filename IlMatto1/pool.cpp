@@ -71,6 +71,10 @@ void pool::sketch(bool shared)
 	for (;;) {
 		uart0_done(notification.pool(::sketch.pool(status.pool(pool::pool()))));
 		if (shared) {
+			if (notification.requestAck(PKG_REQUEST_SKETCH) == PKG_REQUEST_CLOSED) {
+				indicator::refresh(Blue, PSTR("Opponent closed!"));
+				shared = false;
+			}
 			status.checkRemote();
 			indicator::checkRemote(false);
 		} else {
@@ -83,6 +87,8 @@ void pool::sketch(bool shared)
 				break;
 		}
 	}
+	if (shared)
+		notification.sendRequestAck(PKG_REQUEST_SKETCH, PKG_REQUEST_CLOSED);
 }
 
 void pool::testKeypad(void)
@@ -137,6 +143,8 @@ void pool::request(uint8_t req)
 		case PKG_REQUEST_REJECT:
 			goto reject;
 		}
+		if (notification.requestAck(req) == PKG_REQUEST_CLOSED)
+			return;
 		if (touch.pressed()) {
 			rTouch::coord_t pos = touch.position();
 			if (keypad.outsideLeft(pos.x + 10))
@@ -165,6 +173,7 @@ bool pool::sendRequest(uint8_t req)
 
 	uint8_t ack = PKG_REQUEST_INVALID;
 	uint16_t t = tick();
+	bool pressed = false;
 	for (;;) {
 		if (t == tick()) {
 			notification.sendRequest(req);
@@ -174,6 +183,10 @@ bool pool::sendRequest(uint8_t req)
 		uart0_done(notification.pool(status.pool(::pool::pool())));
 		if ((ack = notification.requestAck(req)) != PKG_REQUEST_INVALID)
 			break;
+		if (touch.pressed())
+			pressed = true;
+		else if (pressed)
+			goto close;
 	}
 
 	tft.putString(PSTR("Waiting response...\n"), true);
@@ -186,12 +199,15 @@ bool pool::sendRequest(uint8_t req)
 		}
 		uart0_done(notification.pool(status.pool(::pool::pool())));
 		ack = notification.requestAck(req);
+		if (touch.pressed())
+			pressed = true;
+		else if (pressed)
+			goto close;
 	}
 
 reject:
 	tft.setForeground(Red);
 	tft.putString(PSTR("REJECTED!\n"), true);
-	bool pressed = false;
 	for (;;) {
 		uart0_done(notification.pool(status.pool(::pool::pool())));
 		while (notification.show());
@@ -205,5 +221,9 @@ reject:
 			return false;
 	}
 
+	return false;
+
+close:
+	notification.sendRequestAck(req, PKG_REQUEST_CLOSED);
 	return false;
 }

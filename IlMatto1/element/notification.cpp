@@ -52,6 +52,20 @@ notification_t::request_t *notification_t::popRequest(void)
 	return req;
 }
 
+void notification_t::removeRequests(uint8_t req)
+{
+	request_t **ptr = &reqs;
+	while (*ptr) {
+		if ((*ptr)->req == req) {
+			request_t *p = *ptr;
+			*ptr = p->next;
+			delete p;
+			reqSize--;
+		} else
+			ptr = &(*ptr)->next;
+	}
+}
+
 package_t *notification_t::pool(package_t *pkg)
 {
 	reqAck = PKG_REQUEST_INVALID;
@@ -66,6 +80,8 @@ package_t *notification_t::pool(package_t *pkg)
 		return 0;
 	} else if (pkg->data[0] == PKG_TYPE_REQUEST_ACK) {
 		pkgRequestAck_t *ack = (pkgRequestAck_t *)pkg->data;
+		if (ack->s.ack == PKG_REQUEST_CLOSED)
+			removeRequests(ack->s.req);
 		reqType = ack->s.req;
 		reqAck = ack->s.ack;
 		uart0_done(pkg);

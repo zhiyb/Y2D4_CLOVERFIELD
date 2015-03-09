@@ -24,6 +24,13 @@ bool menu::toggle::func(bool enter)
 	return false;
 }
 
+bool menu::lock::func(bool enter)
+{
+	tft.vsNormal();
+	pool::pinLock();
+	return false;
+}
+
 void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t length, const uint8_t *data)
 {
 	tft.vsNormal();
