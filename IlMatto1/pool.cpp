@@ -5,6 +5,16 @@
 #include "pool.h"
 #include "common.h"
 
+#define AUDIO_TEXT_X	((tft.width() - FONT_WIDTH * 2 * 13) / 2)
+#define AUDIO_TEXT_Y	(tft.height() / 3 - FONT_HEIGHT * 2 / 2)
+#define AUDIO_SIZE	128
+#define AUDIO_X		(tft.width() / 2 - AUDIO_SIZE / 2)
+#define AUDIO_Y		(tft.height() * 2 / 3 - AUDIO_SIZE / 2)
+#define AUDIO_CLR	DarkRed
+#define AUDIO_CLR_ACT	Red
+
+#define TEXT_ZOOM	2
+
 namespace pool
 {
 	void pin(void);
@@ -230,14 +240,6 @@ close:
 	return false;
 }
 
-#define AUDIO_TEXT_X	((tft.width() - FONT_WIDTH * 2 * 13) / 2)
-#define AUDIO_TEXT_Y	(tft.height() / 3 - FONT_HEIGHT * 2 / 2)
-#define AUDIO_SIZE	128
-#define AUDIO_X		(tft.width() / 2 - AUDIO_SIZE / 2)
-#define AUDIO_Y		(tft.height() * 2 / 3 - AUDIO_SIZE / 2)
-#define AUDIO_CLR	DarkRed
-#define AUDIO_CLR_ACT	Red
-
 void pool::audio(void)
 {
 	tft.setBackground(Black);
@@ -292,11 +294,11 @@ bool pool::textInput(const char *str, char *buf)
 	tft.setBackground(Black);
 	tft.setForeground(0x667F);
 	tft.clean();
-	tft.setZoom(2);
+	tft.setZoom(TEXT_ZOOM);
 	tft.putString(str, true);
 	keypad.initText();
 	tft.setForeground(White);
-	tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.foreground());
+	tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * TEXT_ZOOM, FONT_HEIGHT * TEXT_ZOOM, tft.foreground());
 
 	uint8_t len = 0;
 	for (;;) {
@@ -318,17 +320,17 @@ bool pool::textInput(const char *str, char *buf)
 			buf--;
 			len--;
 			if (tft.x())
-				tft.setX(tft.x() - FONT_WIDTH * 2);
+				tft.setX(tft.x() - FONT_WIDTH * TEXT_ZOOM);
 			else {
-				tft.setX(tft.width() - FONT_WIDTH * 2);
-				tft.setY(tft.y() - FONT_HEIGHT * 2);
+				tft.setX(tft.width() - FONT_WIDTH * TEXT_ZOOM);
+				tft.setY(tft.y() - FONT_HEIGHT * TEXT_ZOOM);
 			}
-			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.background());
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * TEXT_ZOOM, FONT_HEIGHT * TEXT_ZOOM, tft.background());
 		} else if (len != PKG_TEXT_LENGTH - 1) {
 			tft << c;
 			*buf++ = c;
 			len++;
-			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.foreground());
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * TEXT_ZOOM, FONT_HEIGHT * TEXT_ZOOM, tft.foreground());
 		}
 	}
 	return false;
