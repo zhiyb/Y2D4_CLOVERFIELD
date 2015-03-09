@@ -2,6 +2,7 @@
  * Author: Yubo Zhi (yz39g13@soton.ac.uk)
  */
 
+#include <string.h>
 #include "notification.h"
 #include "common.h"
 
@@ -204,7 +205,7 @@ void notification_t::sendMessage(uint8_t idx, const char *str)
 	package_t *pkg;
 	while (!(pkg = uart0_txPackage()));
 	pkg->command = COM_W_SEND;
-	uint8_t len = strlen_P(str);
+	uint8_t len = strlen(str);
 	pkg->length = len + 2 + 1;
 	pkgMessage_t *message = (pkgMessage_t *)pkg->data;
 	message->s.type = PKG_TYPE_TEXT;
