@@ -31,6 +31,14 @@ bool menu::lock::func(bool enter)
 	return false;
 }
 
+bool menu::audio::func(bool enter)
+{
+	tft.vsNormal();
+	if (pool::sendRequest(PKG_REQUEST_AUDIO))
+		pool::audio();
+	return false;
+}
+
 void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t length, const uint8_t *data)
 {
 	tft.vsNormal();
@@ -141,7 +149,7 @@ bool menu::diagnosis::w_audio_tx::func(bool enter)
 
 bool menu::diagnosis::w_audio_stop::func(bool enter)
 {
-	packageTest(PSTR("Disabling audio transceiver..."), COM_W_AUDIO_END);
+	packageTest(PSTR("Disabling audio transceiver..."), COM_W_AUDIO_TX_END);
 	return false;
 }
 
@@ -236,5 +244,18 @@ bool menu::diagnosis::keypad::func(bool enter)
 	tft.vsNormal();
 	::pool::testKeypad();
 
+	return false;
+}
+
+bool menu::diagnosis::text::func(bool enter)
+{
+	tft.vsNormal();
+	::pool::textInput(PSTR("Text input"));
+
+	return false;
+}
+
+bool menu::game::tictactoe::func(bool enter)
+{
 	return false;
 }

@@ -48,10 +48,12 @@ void init(void)
 	tft.setBGLight(true);
 	touch.calibrate();
 	keypad.calibrate();
+#ifndef DEBUG
 	if (!pin.init())
 		pool::pinSet();
 	else
 		pool::pinLock();
+#endif
 	eeprom_first_done();
 }
 

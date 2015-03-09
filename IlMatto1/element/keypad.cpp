@@ -41,6 +41,19 @@ const uint8_t keypad_t::PGMkeyCode[KEYPAD_SIZE] PROGMEM = {
 	0x0D, 0x00, 0x0E, 0x0F,
 };
 
+const char keypad_t::PGMkeyText[10][4] PROGMEM = {
+	{'#', '#', '#', '#',},	// 0
+	{'#', '#', '#', '#',},	// 1
+	{'a', 'b', 'c', '#',},	// 2
+	{'d', 'e', 'f', '#',},	// 3
+	{'g', 'h', 'i', '#',},	// 4
+	{'j', 'k', 'l', '#',},	// 5
+	{'m', 'n', 'o', '#',},	// 6
+	{'p', 'q', 'r', 's',},	// 7
+	{'t', 'u', 'v', '#',},	// 8
+	{'w', 'x', 'y', 'z',},	// 9
+};
+
 struct keypad_t::cal_t EEMEM keypad_t::NVcal;
 
 void keypad_t::init(void)
@@ -227,4 +240,46 @@ bool keypad_t::colourPicker(rTouch::coord_t pos, uint16_t &clr) const
 	}
 	clr = conv::c32to16(conv::c32(red, green, blue));
 	return true;
+}
+
+char keypad_t::text(void)
+{
+	rTouch::Status s;
+	if ((s = touch.status()) != rTouch::Idle) {
+		if (prev && index == KEYPAD_NA)
+			return -1;
+		rTouch::coord_t pos = touch.position();
+		status = s;
+		if (prev == 0) {
+			first = pos;
+			index = translate(keyAt(pos));
+			if (index > 9)
+				index = KEYPAD_NA;
+			prev = 1;
+		}
+		prevCoord = pos;
+	} else if (prev) {
+		prev = 0;
+		if (index == KEYPAD_NA)
+			return -1;
+		uint8_t dir = 0;
+		if (status == rTouch::Moved) {
+			if (abs(prevCoord.x - first.x) > abs(prevCoord.y - first.y)) {
+				if (prevCoord.x < first.x)
+					dir = 1;
+				else
+					dir = 3;
+			} else {
+				if (prevCoord.y < first.y)
+					dir = 2;
+				else
+					dir = 4;
+			}
+		}
+		if (!dir)
+			return '0' + index;
+		else
+			return pgm_read_byte(&PGMkeyText[index][dir - 1]);
+	}
+	return -1;
 }

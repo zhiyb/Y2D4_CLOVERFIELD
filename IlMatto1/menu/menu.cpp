@@ -32,6 +32,16 @@ namespace lock
 	static listItem item = {name, misc::icon_test, 0, func};
 }
 
+namespace audio
+{
+	static const char PROGMEM name[] = "Audio";
+	/*static const uint8_t PROGMEM icon[] = {
+		0x07,0xE0,0x0F,0xF0,0x1C,0x38,0x18,0x18,0x18,0x18,0x00,0x38,0x00,0x70,0x00,0xE0,
+		0x01,0xC0,0x01,0x80,0x01,0x80,0x01,0x80,0x00,0x00,0x00,0x00,0x01,0x80,0x01,0x80,
+	};*/
+	static listItem item = {name, misc::icon_test, 0, func};
+}
+
 namespace diagnosis
 {
 	namespace reset
@@ -106,6 +116,12 @@ namespace diagnosis
 		static listItem item = {name, misc::icon_test, 0, func};
 	}
 
+	namespace text
+	{
+		static const char PROGMEM name[] = "Text input";
+		static listItem item = {name, misc::icon_test, 0, func};
+	}
+
 	static const char PROGMEM name[] = "Diagnosis";
 	static const uint8_t PROGMEM icon[] = {
 		0x80,0x01,0x43,0xC2,0x24,0x24,0x08,0x10,0x10,0x08,0x10,0x08,0xD1,0x8B,0x12,0x48,
@@ -117,7 +133,7 @@ namespace diagnosis
 		&ping::item, &wakeup::item, &suspend::item,
 		&w_ping::item, &w_audio_tx::item, &w_audio_stop::item,
 		&w_send::item, &w_data::item,
-		&keypad::item, &toggle::item, 0
+		&keypad::item, &text::item, &toggle::item, 0
 	};
 	static listItem item = {name, icon, items, 0};
 }
@@ -154,13 +170,13 @@ namespace game
 		0x00,0x00,0x10,0x7F,0x28,0x41,0x28,0x41,0x44,0x41,0x44,0x41,0x82,0x41,0xFE,0x7F,
 	};
 
-	namespace tetris
+	namespace tictactoe
 	{
-		static const char PROGMEM name[] = "Tetris";
-		static listItem item = {name, icon, 0, 0};
+		static const char PROGMEM name[] = "Tic Tac Toe";
+		static listItem item = {name, icon, 0, func};
 	}
 
-	static const listItem *items[] = {&tetris::item, 0};
+	static const listItem *items[] = {&tictactoe::item, 0};
 	static listItem item = {name, icon, items, 0};
 }
 
@@ -212,12 +228,12 @@ namespace help
 
 namespace root
 {
-	static const char PROGMEM name[] = "Root";
+	static const char PROGMEM name[] = "Talkie walkie 2k";
 	static const uint8_t PROGMEM icon[] = {
 		0x00,0x00,0x07,0xE0,0x0F,0xF0,0x1F,0xF8,0x3F,0xFC,0x7F,0xFE,0x7E,0x7E,0x7C,0x3E,
 		0x7C,0x3E,0x7E,0x7E,0x7F,0xFE,0x3F,0xFC,0x1F,0xF8,0x0F,0xF0,0x07,0xE0,0x00,0x00,
 	};
-	static const listItem *items[] = {&lock::item, &sketch::item, &game::item, &settings::item, &help::item, &diagnosis::item, 0};
+	static const listItem *items[] = {&lock::item, &audio::item, &sketch::item, &game::item, &settings::item, &help::item, &diagnosis::item, 0};
 	listItem item = {name, icon, items, 0};
 }
 

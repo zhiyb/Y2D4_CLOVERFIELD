@@ -157,6 +157,9 @@ accept:
 	case PKG_REQUEST_SKETCH:
 		pool::sketch(true);
 		break;
+	case PKG_REQUEST_AUDIO:
+		pool::audio();
+		break;
 	}
 	return;
 reject:
@@ -226,4 +229,84 @@ reject:
 close:
 	notification.sendRequestAck(req, PKG_REQUEST_CLOSED);
 	return false;
+}
+
+#define AUDIO_TEXT_X	((tft.width() - FONT_WIDTH * 2 * 13) / 2)
+#define AUDIO_TEXT_Y	(tft.height() / 3 - FONT_HEIGHT * 2 / 2)
+#define AUDIO_SIZE	128
+#define AUDIO_X		(tft.width() / 2 - AUDIO_SIZE / 2)
+#define AUDIO_Y		(tft.height() * 2 / 3 - AUDIO_SIZE / 2)
+#define AUDIO_CLR	DarkRed
+#define AUDIO_CLR_ACT	Red
+
+void pool::audio(void)
+{
+	tft.setBackground(Black);
+	tft.setForeground(0x667F);
+	tft.clean();
+	tft.setZoom(2);
+	tft.setXY(AUDIO_TEXT_X, AUDIO_TEXT_Y);
+	tft.putString(PSTR("Press to talk"), true);
+
+	tft.rectangle(AUDIO_X, AUDIO_Y, AUDIO_SIZE, AUDIO_SIZE, AUDIO_CLR);
+
+	bool pressed = false;
+	package_t *pkg;
+	for (;;) {
+		uart0_done(notification.pool(status.pool(::pool::pool())));
+		if (notification.requestAck(PKG_REQUEST_AUDIO) == PKG_REQUEST_CLOSED)
+			goto ret;
+		if (touch.pressed()) {
+			rTouch::coord_t pos = touch.position();
+			if (keypad.outsideLeft(pos.x + 10)) {
+				notification.sendRequestAck(PKG_REQUEST_AUDIO, PKG_REQUEST_CLOSED);
+				goto ret;
+			}
+			if (!pressed) {
+				tft.rectangle(AUDIO_X, AUDIO_Y, AUDIO_SIZE, AUDIO_SIZE, AUDIO_CLR_ACT);
+				pressed = true;
+			}
+			while (!(pkg = uart0_txPackage()));
+			pkg->command = COM_W_AUDIO_TX;
+			pkg->valid++;
+			uart0_send();
+		} else if (pressed) {
+			tft.rectangle(AUDIO_X, AUDIO_Y, AUDIO_SIZE, AUDIO_SIZE, AUDIO_CLR);
+			pressed  = false;
+			while (!(pkg = uart0_txPackage()));
+			pkg->command = COM_W_AUDIO_TX_END;
+			pkg->valid++;
+			uart0_send();
+		}
+	}
+ret:
+	if (pressed) {
+		while (!(pkg = uart0_txPackage()));
+		pkg->command = COM_W_AUDIO_TX_END;
+		pkg->valid++;
+		uart0_send();
+	}
+}
+
+void pool::textInput(const char *str)
+{
+	tft.setBackground(Black);
+	tft.setForeground(0x667F);
+	tft.clean();
+	tft.setZoom(2);
+	tft.putString(str, true);
+	keypad.initText();
+
+	for (;;) {
+		uart0_done(notification.pool(status.pool(::pool::pool())));
+		if (touch.pressed()) {
+			rTouch::coord_t pos = touch.position();
+			if (pos.x >= 0)
+				break;
+		}
+		char c = keypad.text();
+		if (c != -1)
+			tft << c;
+		while (notification.show());
+	}
 }

@@ -1,3 +1,7 @@
+/*
+ * Author: Yubo Zhi (yz39g13@soton.ac.uk)
+ */
+
 #include "notification.h"
 #include "common.h"
 
@@ -18,9 +22,10 @@
 namespace name
 {
 	const char PROGMEM sketch[] = "Shared sketch";
+	const char PROGMEM audio[] = "Audio";
 }
 
-const char *requestName[1] = {name::sketch};
+const char *requestName[PKG_REQUEST_COUNT] = {name::sketch, name::audio};
 
 void notification_t::init(void)
 {

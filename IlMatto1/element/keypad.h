@@ -40,6 +40,8 @@ public:
 	uint8_t keyAt(const rTouch::coord_t pos) const;
 	// Translate key index to key code
 	uint8_t translate(uint8_t idx);
+	void initText(void) {prev = 0;}
+	char text(void);
 
 private:
 	// Convert index to coordinate relative to TOP-LEFT for DISPLAY
@@ -48,7 +50,8 @@ private:
 	void drawKey(uint8_t idx, uint16_t clr = KEYPAD_DEF_CLR) const;
 	void drawKeypad(void) const;
 
-	uint8_t prev, prevTest;
+	uint8_t prev, prevTest, index, status;
+	rTouch::coord_t first, prevCoord;
 	struct cal_t {
 		rTouch::coord_t pos, size;
 	} cal;
@@ -58,6 +61,8 @@ private:
 	static const char PGMkeyName[KEYPAD_SIZE] PROGMEM;
 	// Key code
 	static const uint8_t PGMkeyCode[KEYPAD_SIZE] PROGMEM;
+	// Text
+	static const char PGMkeyText[10][4] PROGMEM;
 };
 
 #endif

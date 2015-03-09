@@ -16,6 +16,8 @@ namespace menu
 
 	namespace lock {bool func(bool enter);}
 
+	namespace audio {bool func(bool enter);}
+
 	namespace diagnosis
 	{
 		namespace reset {bool func(bool enter);}
@@ -33,12 +35,18 @@ namespace menu
 		namespace w_data {bool func(bool enter);}
 
 		namespace keypad {bool func(bool enter);}
+		namespace text {bool func(bool enter);}
 	}
 
 	namespace sketch
 	{
 		namespace single {bool func(bool enter);}
 		namespace shared {bool func(bool enter);}
+	}
+
+	namespace game
+	{
+		namespace tictactoe {bool func(bool enter);}
 	}
 
 	namespace settings

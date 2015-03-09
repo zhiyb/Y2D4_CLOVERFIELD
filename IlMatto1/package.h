@@ -13,6 +13,8 @@
 #define PKG_SKETCH_PREPEND	4
 
 #define PKG_REQUEST_SKETCH	0
+#define PKG_REQUEST_AUDIO	1
+#define PKG_REQUEST_COUNT	2
 
 #define PKG_REQUEST_ACCEPT	0
 #define PKG_REQUEST_REJECT	1
@@ -20,7 +22,7 @@
 #define PKG_REQUEST_CLOSED	3
 #define PKG_REQUEST_INVALID	0xFF
 
-extern const char *requestName[1];
+extern const char *requestName[PKG_REQUEST_COUNT];
 
 union pkgSketch_t {
 	uint8_t d[BUFFER_SIZE];
