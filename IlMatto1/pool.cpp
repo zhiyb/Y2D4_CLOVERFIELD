@@ -296,7 +296,7 @@ bool pool::textInput(const char *str, char *buf)
 	tft.putString(str, true);
 	keypad.initText();
 	tft.setForeground(White);
-	tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, White);
+	tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.foreground());
 
 	uint8_t len = 0;
 	for (;;) {
@@ -323,12 +323,12 @@ bool pool::textInput(const char *str, char *buf)
 				tft.setX(tft.width() - FONT_WIDTH * 2);
 				tft.setY(tft.y() - FONT_HEIGHT * 2);
 			}
-			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, Black);
-		} else if (len != PKG_TEXT_LENGTH - 2) {
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.background());
+		} else if (len != PKG_TEXT_LENGTH - 1) {
 			tft << c;
 			*buf++ = c;
 			len++;
-			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, White);
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, tft.foreground());
 		}
 	}
 	return false;
