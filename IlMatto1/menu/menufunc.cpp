@@ -8,6 +8,7 @@
 #include "pool.h"
 #include "common.h"
 
+#ifdef DEBUG
 namespace menu
 {
 	namespace diagnosis
@@ -15,6 +16,7 @@ namespace menu
 		static void packageTest(const char *name, uint8_t command, uint8_t length = 0, const uint8_t *data = 0);
 	}
 }
+#endif
 
 using namespace menu;
 
@@ -39,6 +41,7 @@ bool menu::audio::func(bool enter)
 	return false;
 }
 
+#ifdef DEBUG
 void menu::diagnosis::packageTest(const char *name, uint8_t command, uint8_t length, const uint8_t *data)
 {
 	tft.vsNormal();
@@ -195,6 +198,24 @@ bool menu::diagnosis::w_data::func(bool enter)
 	return false;
 }
 
+bool menu::diagnosis::keypad::func(bool enter)
+{
+	tft.vsNormal();
+	::pool::testKeypad();
+
+	return false;
+}
+
+bool menu::diagnosis::text::func(bool enter)
+{
+	tft.vsNormal();
+	char str[PKG_TEXT_LENGTH];
+	::pool::textInput(PSTR("Text input\n"), str);
+
+	return false;
+}
+#endif
+
 bool menu::sketch::single::func(bool enter)
 {
 	tft.vsNormal();
@@ -236,23 +257,6 @@ bool menu::settings::frequency::func(bool enter)
 {
 	//tft.vsNormal();
 	//keypad.recalibrate();
-	return false;
-}
-
-bool menu::diagnosis::keypad::func(bool enter)
-{
-	tft.vsNormal();
-	::pool::testKeypad();
-
-	return false;
-}
-
-bool menu::diagnosis::text::func(bool enter)
-{
-	tft.vsNormal();
-	char str[PKG_TEXT_LENGTH];
-	::pool::textInput(PSTR("Text input\n"), str);
-
 	return false;
 }
 

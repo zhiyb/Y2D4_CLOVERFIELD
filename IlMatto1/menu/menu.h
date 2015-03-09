@@ -18,6 +18,7 @@ namespace menu
 
 	namespace audio {bool func(bool enter);}
 
+#ifdef DEBUG
 	namespace diagnosis
 	{
 		namespace reset {bool func(bool enter);}
@@ -37,6 +38,7 @@ namespace menu
 		namespace keypad {bool func(bool enter);}
 		namespace text {bool func(bool enter);}
 	}
+#endif
 
 	namespace sketch
 	{

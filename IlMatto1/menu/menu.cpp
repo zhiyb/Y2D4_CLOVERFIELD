@@ -18,11 +18,13 @@ namespace misc
 	};
 }
 
+#ifdef DEBUG
 namespace toggle
 {
 	static const char PROGMEM name[] = "LED Toggle";
 	static listItem item = {name, misc::icon_test, 0, func};
 }
+#endif
 
 namespace lock
 {
@@ -60,6 +62,7 @@ namespace game
 	static listItem item = {name, icon, items, 0};
 }
 
+#ifdef DEBUG
 namespace diagnosis
 {
 	namespace reset
@@ -156,6 +159,7 @@ namespace diagnosis
 	};
 	static listItem item = {name, icon, items, 0};
 }
+#endif
 
 namespace sketch
 {
@@ -246,8 +250,14 @@ namespace root
 		0x00,0x00,0x07,0xE0,0x0F,0xF0,0x1F,0xF8,0x3F,0xFC,0x7F,0xFE,0x7E,0x7E,0x7C,0x3E,
 		0x7C,0x3E,0x7E,0x7E,0x7F,0xFE,0x3F,0xFC,0x1F,0xF8,0x0F,0xF0,0x07,0xE0,0x00,0x00,
 	};
-	static const listItem *items[] = {&lock::item, &audio::item, &sketch::item, &text::item, \
-		&settings::item, &help::item, &diagnosis::item, 0};
+	static const listItem *items[] = {&lock::item, &audio::item, &sketch::item, &text::item,
+		&settings::item, &help::item,
+#ifdef DEBUG
+		&diagnosis::item,
+#else
+		&game::item,
+#endif
+		0};
 	listItem item = {name, icon, items, 0};
 }
 
