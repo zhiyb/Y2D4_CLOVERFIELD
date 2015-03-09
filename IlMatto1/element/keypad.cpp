@@ -41,17 +41,22 @@ const uint8_t keypad_t::PGMkeyCode[KEYPAD_SIZE] PROGMEM = {
 	0x0D, 0x00, 0x0E, 0x0F,
 };
 
-const char keypad_t::PGMkeyText[10][4] PROGMEM = {
-	{'#', '#', '#', '#',},	// 0
-	{'#', '#', '#', '#',},	// 1
-	{'a', 'b', 'c', '#',},	// 2
-	{'d', 'e', 'f', '#',},	// 3
-	{'g', 'h', 'i', '#',},	// 4
-	{'j', 'k', 'l', '#',},	// 5
-	{'m', 'n', 'o', '#',},	// 6
-	{'p', 'q', 'r', 's',},	// 7
-	{'t', 'u', 'v', '#',},	// 8
-	{'w', 'x', 'y', 'z',},	// 9
+const char keypad_t::PGMkeyText[KEYPAD_SIZE - 1][5] PROGMEM = {
+	{'0', ' ', '!', '@', '#',},	// 0
+	{'1', '$', '%', '&', '~',},	// 1
+	{'2', 'a', 'b', 'c', ',',},	// 2
+	{'3', 'd', 'e', 'f', '.',},	// 3
+	{'4', 'g', 'h', 'i', ':',},	// 4
+	{'5', 'j', 'k', 'l', ';',},	// 5
+	{'6', 'm', 'n', 'o', '?',},	// 6
+	{'7', 'p', 'q', 'r', 's',},	// 7
+	{'8', 't', 'u', 'v', '_',},	// 8
+	{'9', 'w', 'x', 'y', 'z',},	// 9
+	{' ', '\'', '/', '"', '\\',},	// A
+	{' ', '+', '*', '-', '=',},	// B
+	{' ', '(', '[', ')', ']',},	// C
+	{' ', '{', '<', '}', '>',},	// D
+	{' ', '|', '`', '^', ' ',},	// E
 };
 
 struct keypad_t::cal_t EEMEM keypad_t::NVcal;
@@ -253,8 +258,7 @@ char keypad_t::text(void)
 		if (prev == 0) {
 			first = pos;
 			index = translate(keyAt(pos));
-			if (index > 9)
-				index = KEYPAD_NA;
+			index = KEYPAD_NA;
 			prev = 1;
 		}
 		prevCoord = pos;
@@ -276,10 +280,7 @@ char keypad_t::text(void)
 					dir = 4;
 			}
 		}
-		if (!dir)
-			return '0' + index;
-		else
-			return pgm_read_byte(&PGMkeyText[index][dir - 1]);
+		return pgm_read_byte(&PGMkeyText[index][dir - 1]);
 	}
 	return -1;
 }

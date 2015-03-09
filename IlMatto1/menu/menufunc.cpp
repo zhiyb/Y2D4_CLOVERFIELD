@@ -250,7 +250,7 @@ bool menu::diagnosis::keypad::func(bool enter)
 bool menu::diagnosis::text::func(bool enter)
 {
 	tft.vsNormal();
-	::pool::textInput(PSTR("Text input"));
+	::pool::textInput(PSTR("Text input\n"));
 
 	return false;
 }

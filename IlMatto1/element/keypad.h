@@ -62,7 +62,7 @@ private:
 	// Key code
 	static const uint8_t PGMkeyCode[KEYPAD_SIZE] PROGMEM;
 	// Text
-	static const char PGMkeyText[10][4] PROGMEM;
+	static const char PGMkeyText[KEYPAD_SIZE - 1][5] PROGMEM;
 };
 
 #endif
