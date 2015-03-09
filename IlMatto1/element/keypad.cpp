@@ -79,8 +79,6 @@ void keypad_t::drawCross(const rTouch::coord_t pos, uint16_t c) const
 
 void keypad_t::display(void) const
 {
-	tft.setBackground(0x0000);
-	tft.setForeground(0x667F);
 	tft.setZoom(2);
 	tft.clean();
 	tft.setOrient(tft_t::Portrait);
@@ -95,6 +93,8 @@ void keypad_t::calibrate(bool reset)
 	}
 
 	display();
+	tft.setBackground(0x0000);
+	tft.setForeground(0x667F);
 	tft.setXY(0, 0);
 	tft.setZoom(1);
 	tft.putString(PSTR("Keypad Calibration\n"), true);
@@ -280,7 +280,7 @@ char keypad_t::text(void)
 			}
 		}
 		if (index == 0x0F)
-			return (uint8_t)-2;
+			return KEYPAD_DEL;
 		return pgm_read_byte(&PGMkeyText[index][dir]);
 	}
 	return -1;

@@ -295,6 +295,8 @@ bool pool::textInput(const char *str, char *buf)
 	tft.setZoom(2);
 	tft.putString(str, true);
 	keypad.initText();
+	tft.setForeground(White);
+	tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, White);
 
 	uint8_t len = 0;
 	for (;;) {
@@ -306,27 +308,28 @@ bool pool::textInput(const char *str, char *buf)
 				return true;
 			}
 		}
-		char c = keypad.text();
-		if (c != -1) {
-			if (c == -2) {
-				if (len) {
-					buf--;
-					len--;
-					if (tft.x())
-						tft.setX(tft.x() - FONT_WIDTH * 2);
-					else {
-						tft.setX(tft.width() - FONT_WIDTH * 2);
-						tft.setY(tft.y() - FONT_HEIGHT * 2);
-					}
-					tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, Black);
-				}
-			} else if (len != PKG_TEXT_LENGTH - 2) {
-				tft << c;
-				*buf++ = c;
-				len++;
-			}
-		}
 		while (notification.show());
+		char c = keypad.text();
+		if (c == -1)
+			continue;
+		if (c == KEYPAD_DEL) {
+			if (!len)
+				continue;
+			buf--;
+			len--;
+			if (tft.x())
+				tft.setX(tft.x() - FONT_WIDTH * 2);
+			else {
+				tft.setX(tft.width() - FONT_WIDTH * 2);
+				tft.setY(tft.y() - FONT_HEIGHT * 2);
+			}
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, Black);
+		} else if (len != PKG_TEXT_LENGTH - 2) {
+			tft << c;
+			*buf++ = c;
+			len++;
+			tft.rectangle(tft.x(), tft.y(), FONT_WIDTH * 2, FONT_HEIGHT * 2, White);
+		}
 	}
 	return false;
 }

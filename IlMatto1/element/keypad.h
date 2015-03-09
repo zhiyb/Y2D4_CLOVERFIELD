@@ -19,6 +19,8 @@
 
 // Key code for N/A
 #define KEYPAD_NA	0xFF
+// Key code for delete
+#define KEYPAD_DEL	127
 
 #include <avr/pgmspace.h>
 #include <rtouch.h>
