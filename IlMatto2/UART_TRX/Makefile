@@ -1,7 +1,7 @@
 # Modified by zhiyb (Yubo Zhi)
 
 PRG	= UTRX
-SRC	= rfm12.c adc.c timer.c uart0.c UTRX.c
+SRC	= rfm12.c adc.c timer.c uart0.c testaudioTRX_FINAL.c
 LIB	= 
 VERSION	= 0.0.1
 
