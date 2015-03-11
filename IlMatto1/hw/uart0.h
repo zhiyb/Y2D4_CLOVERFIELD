@@ -23,7 +23,7 @@ struct package_t *uart0_txPackage(void);
 // ACK received
 uint8_t uart0_ack(void);
 
-// Done with rx package
+// Done with rx package, mask as free, send ACK
 void uart0_done(struct package_t *pkg);
 // Check available rx package for read, 0 for none
 struct package_t *uart0_rxPackage(void);

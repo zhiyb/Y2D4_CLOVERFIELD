@@ -39,7 +39,6 @@ public:
 	inline void setBackground(uint16_t c) {d.bgc = c;}
 	inline uint16_t foreground(void) const {return d.fgc;}
 	inline uint16_t background(void) const {return d.bgc;}
-	void bmp(bool e);
 	void setOrient(uint8_t o);
 	inline uint8_t orient(void) const {return d.orient;}
 	inline void setBGLight(bool e) {_setBGLight(e);}

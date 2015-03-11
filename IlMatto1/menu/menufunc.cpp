@@ -255,8 +255,6 @@ bool menu::settings::keypadcal::func(bool enter)
 
 bool menu::settings::frequency::func(bool enter)
 {
-	//tft.vsNormal();
-	//keypad.recalibrate();
 	return false;
 }
 

@@ -15,7 +15,10 @@ namespace pool
 	void pinLock(void);
 	void pinSet(void);
 	void sketch(bool shared);
+#ifdef DEBUG
 	void testKeypad(void);
+	void tictactoe(void);
+#endif
 	bool textInput(const char *str, char *buf);
 	void list(void);
 	void request(uint8_t req);
@@ -23,7 +26,6 @@ namespace pool
 	void audio(void);
 	void message(const char *str);
 	void sendMessage(const char *str);
-	void tictactoe(void);
 }
 
 #endif

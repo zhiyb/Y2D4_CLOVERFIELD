@@ -203,14 +203,6 @@ uint16_t tft_t::vsTransformBack(uint16_t y) const
 }
 #endif
 
-void tft_t::bmp(bool e)
-{
-	if (e)
-		_setOrient(orient() + BMPLandscape);
-	else
-		_setOrient(orient());
-}
-
 #ifdef TFT_VERTICALSCROLLING
 void tft_t::setVerticalScrolling(const uint16_t vsp)
 {
