@@ -11,7 +11,7 @@ OPTIMIZE	= -Os
 
 DEFS	+= -DF_CPU=12000000
 LIBS	+=
-INCS	+= -I.
+INCS	+= -I. -I../../inc
 
 EFUSE	= 0xFF
 HFUSE	= 0x9C

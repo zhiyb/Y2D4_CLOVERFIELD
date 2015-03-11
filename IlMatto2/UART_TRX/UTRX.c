@@ -72,11 +72,11 @@ int main() {
 				case COM_PING:
 					uart0_done(pkg);
 					break;
-				case COM_W_AUDIO:
+				case COM_W_AUDIO_TX:
 					transmit = 1;
 					uart0_done(pkg);
 					break;
-				case COM_W_AUDIO_END:
+				case COM_W_AUDIO_TX_END:
 					transmit = 0;
 					uart0_done(pkg);
 					break;
