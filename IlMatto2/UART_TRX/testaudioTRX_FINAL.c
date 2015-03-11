@@ -108,12 +108,12 @@ int main() {
           audioTX = 1;
           uart0_done(pkg);
           break;
-        case COM_W_AUDIO_END:
+	case COM_W_AUDIO_TX_END:
           audioTX = 0;
           uart0_done(pkg);
           break;
         case COM_FREQ:
-          rfm12_set_frequency(*(uint16_t *)(pkg->data));
+          rfm12_set_frequency(((uint16_t)pkg->data[1] << 8) | ((uint16_t)pkg->data[0]));
           uart0_done(pkg);
           break;
         case COM_W_SEND:
