@@ -11,6 +11,7 @@
 #include "menu.h"
 #include "pool.h"
 #include "common.h"
+#include "capture.h"
 
 using namespace colours::b16;
 
@@ -40,6 +41,8 @@ void init(void)
 	tft.clean();
 
 	stdout = tftout(&tft);
+	capture::init(&tft);
+	capture::enable();
 	notification.init();
 	touch.init();
 	keypad.init();
