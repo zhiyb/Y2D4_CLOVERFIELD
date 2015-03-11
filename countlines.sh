@@ -6,5 +6,5 @@ files=$(while (($# != 0)); do
 	find "$1" -type f -name '*.h'
 	shift
 done)
-echo "$files" 1>&2
-cat $files | wc -l
+echo "$files"
+cat $files | wc -l 1>&2
