@@ -18,13 +18,13 @@ echo '\documentclass[a4paper,notitlepage,10pt]{report}
 
 \lstset{frame=tb,
   language=C++,
-  aboveskip=2mm,
-  belowskip=2mm,
+  aboveskip=0mm,
+  belowskip=0mm,
   showstringspaces=false,
   columns=flexible,
   basicstyle={\small\ttfamily},
   numbers=left,
-  numberstyle=\tiny\color{gray},
+  numberstyle=\small\color{gray},
   keywordstyle=\color{blue},
   commentstyle=\color{dkgreen},
   stringstyle=\color{mauve},
@@ -36,10 +36,8 @@ echo '\documentclass[a4paper,notitlepage,10pt]{report}
 \begin{document}'
 
 for ((i = 0; i < ${#files[@]}; i++)); do
-	echo '\begin{lstlisting}'
-	echo "// ${files[i]}"
-	cat "${files[i]}"
-	echo '\end{lstlisting}'
+	echo "\\lstset{caption=$(echo ${files[i]} | sed 's/_/\\_/g')}"
+	echo "\\lstinputlisting{${files[i]}}"
 	echo
 done
 
