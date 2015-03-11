@@ -7,7 +7,6 @@
 #include "rfm12.h"
 //#include "debug.h"
 #include "pwm.h"
-#include "timer.h"
 #include "adc.h"
 #include "uart0.h"
 #include "communication.h"
@@ -61,8 +60,6 @@ int main() {
   
   _delay_ms(1000);
   rfm12_init();
-  //init_debug_uart0();
-  initTimer0();
   uart0_init();
     
   pwm_init();
