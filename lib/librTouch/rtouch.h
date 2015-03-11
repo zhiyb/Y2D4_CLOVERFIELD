@@ -9,9 +9,6 @@
 #include <avr/io.h>
 #include <tft.h>
 
-// Safe mode switches, generally unnecessary
-//#define RTOUCH_SAFE
-
 // X+ and Y+
 #define RTOUCH_DDRP	DDRA
 #define RTOUCH_PINP	PINA

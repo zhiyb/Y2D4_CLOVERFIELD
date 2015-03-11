@@ -21,17 +21,10 @@
 #define DRAW_NAME_Y	((DRAW_KEY_H - FONT_HEIGHT * 2) / 2)
 
 const char keypad_t::PGMkeyName[KEYPAD_SIZE] PROGMEM = {
-#if 1
 	'1', '2', '3', 'A',
 	'4', '5', '6', 'B',
 	'7', '8', '9', 'C',
 	'D', '0', 'E', 'F',
-#else
-	'7', '8', '9', 'A',
-	'4', '5', '6', 'B',
-	'1', '2', '3', 'C',
-	'D', '0', 'E', 'F',
-#endif
 };
 
 const uint8_t keypad_t::PGMkeyCode[KEYPAD_SIZE] PROGMEM = {

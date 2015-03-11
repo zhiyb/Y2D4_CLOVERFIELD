@@ -68,10 +68,7 @@ void sketch_t::sendPackage(void)
 	buffer.s.size = size;
 
 	package_t *pkg;
-	//uint16_t t = tick() ? tick() - 1 : TICK_CYCLE;
 	while (!(pkg = uart0_txPackage()));
-	//	if (tick() == t)
-	//		uart0_reset();
 
 	pkg->command = COM_W_SEND;
 	pkg->length = bufferSize;

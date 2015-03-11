@@ -5,14 +5,8 @@
 #ifndef TFT_H
 #define TFT_H
 
-// TFT is connected using port BD instead of port AC
-//#define TFT_USE_PORT_BD
-// Use shifting up instead of clean screen after screen full
-//#define TFT_SCROLL
 // Enable vertical scrolling functions
 //#define TFT_VERTICALSCROLLING
-// Enable (unnecessary) draw in range checking
-//#define TFT_CHECKING
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -45,7 +39,6 @@ public:
 	inline void setBackground(uint16_t c) {d.bgc = c;}
 	inline uint16_t foreground(void) const {return d.fgc;}
 	inline uint16_t background(void) const {return d.bgc;}
-	void bmp(bool e);
 	void setOrient(uint8_t o);
 	inline uint8_t orient(void) const {return d.orient;}
 	inline void setBGLight(bool e) {_setBGLight(e);}
@@ -97,7 +90,6 @@ public:
 	void rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, \
 		uint16_t c);
 	inline void point(uint16_t x, uint16_t y, uint16_t c);
-	inline void shiftUp(const uint16_t l);
 
 	inline void area(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 	inline void all(void) {area(0, 0, width(), height());}
@@ -144,51 +136,6 @@ inline uint16_t tft_t::vsMaximum(void) const
 }
 #endif
 
-inline void tft_t::shiftUp(const uint16_t l)
-{
-	// 0x2C Write, 0x2E Read, 0x3C / 0x3E Continue, 0x00 NOP
-	uint8_t buff[width() * 2];
-	uint16_t r;
-	cmd(0x2A);			// Column Address Set
-	write16(0);
-	write16(width() - 1);
-	for (r = 0; r < height() - l; r++) {
-		uint16_t b = width() * 2;
-		//area(0, r + l, w, 1);
-		cmd(0x2B);		// Page Address Set
-		write16(r + l);
-		write16(r + l);
-		cmd(0x2E);		// Read
-		mode(true);		// Read mode
-		recv();
-		while (b--) {
-			buff[b] = recv() & 0xF8;
-			uint8_t g = recv();
-			buff[b--] |= g >> 5;
-			buff[b] = (g << 3) & 0xE0;
-			buff[b] |= recv() >> 3;
-		}
-		mode(false);		// Write mode
-
-		b = width() * 2;
-		//area(0, r, w, 1);
-		cmd(0x2B);		// Page Address Set
-		write16(r);
-		write16(r);
-		start();
-		while (b--)
-			data(buff[b]);
-	}
-	//area(0, h - l, w, l);
-	cmd(0x2B);		// Page Address Set
-	write16(height() - l);
-	write16(height() - 1);
-	start();
-	while (r++ < height())
-		for (uint16_t c = width(); c; c--)
-			write16(background());
-}
-
 inline class tft_t& tft_t::operator<<(const char c)
 {
 	switch (c) {
@@ -227,13 +174,8 @@ inline void tft_t::newline(void)
 	setX(0);
 	setY(y() + FONT_HEIGHT * zoom());
 	if (y() + FONT_HEIGHT * zoom() > height()) {
-#ifdef TFT_SCROLL
-		*this ^= FONT_HEIGHT * zoom;
-		y -= FONT_HEIGHT * zoom;
-#else
 		fill(background());
 		setY(0);
-#endif
 	}
 }
 
@@ -264,18 +206,9 @@ inline void tft_t::area(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 
 inline void tft_t::next(void)
 {
-#ifdef TFT_VERTICALSCROLLING
-	if (transform() && !portrait()) {
-		uint16_t xt = vsTransformBack(x());
-		setX(vsTransform(xt + FONT_WIDTH * zoom()));
-	} else {
-#endif
-		setX(x() + FONT_WIDTH * zoom());
-		if (x() + FONT_WIDTH * zoom() > width())
-			newline();
-#ifdef TFT_VERTICALSCROLLING
-	}
-#endif
+	setX(x() + FONT_WIDTH * zoom());
+	if (x() + FONT_WIDTH * zoom() > width())
+		newline();
 }
 
 inline void tft_t::tab(void)

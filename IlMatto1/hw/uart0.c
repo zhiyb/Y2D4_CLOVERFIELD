@@ -57,7 +57,7 @@ void uart0_init(void)
 
 	// Clear flags
 	UCSR0A |= _BV(TXC0);
-	UDR0;
+	READ();
 
 	// Data struct reset
 	uart0_reset();
@@ -87,7 +87,6 @@ void uart0_send(void)
 	ENABLE_UDREI();
 }
 
-#include <util/delay.h>
 struct package_t *uart0_txPackage(void)
 {
 	uint8_t current = tx.current;

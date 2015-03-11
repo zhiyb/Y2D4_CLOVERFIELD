@@ -101,6 +101,7 @@ void pool::sketch(bool shared)
 		notification.sendRequestAck(PKG_REQUEST_SKETCH, PKG_REQUEST_CLOSED);
 }
 
+#ifdef DEBUG
 void pool::testKeypad(void)
 {
 	keypad.display();
@@ -118,6 +119,7 @@ void pool::testKeypad(void)
 		}
 	}
 }
+#endif
 
 void pool::list(void)
 {
@@ -378,6 +380,8 @@ void pool::sendMessage(const char *str)
 	}
 }
 
+#ifdef DEBUG
 void pool::tictactoe(void)
 {
 }
+#endif
