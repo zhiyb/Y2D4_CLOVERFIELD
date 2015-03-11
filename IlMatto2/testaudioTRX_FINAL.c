@@ -5,13 +5,11 @@
 #include <ctype.h>
 
 #include "rfm12.h"
-//#include "debug.h"
 #include "pwm.h"
 #include "adc.h"
 #include "uart0.h"
+#include "timer.h"
 #include "communication.h"
-
-//#define BAUD 57600
 
 #define AUDIO 0xAA
 #define IMAGE 0xCC
@@ -24,13 +22,13 @@ volatile uint8_t pwm_buffer[BUFFLEN];
 volatile uint8_t audioTX = 0, audioRX = 0;
 
 ISR(ADC_vect) {
-  TIFR0 |= _BV(OCF0A); //reset compare match flag 
+  TIFR0 |= _BV(OCF0A); //reset compare match flag
   if(count < BUFFLEN) {
     if(!audioTX) {
       pwm_set(pwm_buffer[count]);
     }
     adc_buffer[count] = ADCH;
-    
+
     count++;
   }
 }
@@ -57,16 +55,17 @@ uint8_t decryption(uint8_t data)
 
 int main() {
 
-  
+
   _delay_ms(1000);
   rfm12_init();
   uart0_init();
-    
+  initTimer0();
+
   pwm_init();
   pwm_enable(1);
   initi_ADC();
   adc_interrupt_enable();
-  
+
   sei();
   adc_start();
   _delay_ms(1000);
@@ -134,8 +133,8 @@ int main() {
     if(audioTX) {//push button for now, can integrate the "talk" command when we add IL MATTO 1
 
       if(count >= BUFFLEN) { //executes when adc buffer is full
-        //prepare ADC buffer for transmit 
-        
+        //prepare ADC buffer for transmit
+
         for(i=0; i<BUFFLEN; i++) {
           transmit_buffer[i] = encryption(adc_buffer[i]);   //encrypt the data
         }
@@ -143,7 +142,7 @@ int main() {
 
         while (rfm12_tx(sizeof(transmit_buffer), AUDIO, transmit_buffer) != RFM12_TX_ENQUEUED)
           rfm12_tick();
-    
+
 
         count = 0;
 
