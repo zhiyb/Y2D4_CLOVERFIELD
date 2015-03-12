@@ -11,8 +11,8 @@
 #define UART0_TX_STATUS		0x0F	// Status mask
 
 // UART0 tx status
-#define UART0_TX_IDLE		0			// Idle
-#define UART0_TX_WAITING	1			// Waiting for ACK
+#define UART0_TX_IDLE		0	// Idle
+#define UART0_TX_WAITING	1	// Waiting for ACK
 #define UART0_TX_COMMAND	(UART0_TX_SENDING | 2)	// Sending command byte
 #define UART0_TX_LENGTH		(UART0_TX_SENDING | 3)	// Sending length byte
 #define UART0_TX_DATA		(UART0_TX_SENDING | 4)	// Sending data
@@ -46,7 +46,7 @@ static struct buffer_t {
 void uart0_init(void)
 {
 	// Initialise UART0_TX
-	#include <util/setbaud.h>
+#include <util/setbaud.h>
 	DDRD &= ~0x03;
 	PORTD |= 0x03;
 	UBRR0H = UBRRH_VALUE;
@@ -136,7 +136,7 @@ ISR(USART0_UDRE_vect)
 	tx.status = UART0_TX_COMMAND;
 	return;
 
-sending:
+ sending:
 	switch (tx.status) {
 	case UART0_TX_COMMAND:
 		WRITE(pkg->length);
@@ -154,11 +154,11 @@ sending:
 		return;
 	}
 
-complete:
+ complete:
 	tx.status = UART0_TX_WAITING;	// Waiting for ACK
 	PORTB |= _BV(6);
 
-disable:
+ disable:
 	DISABLE_UDREI();
 }
 
@@ -224,7 +224,7 @@ ISR(USART0_RX_vect)
 	rx.status = UART0_RX_COMMAND;
 	return;
 
-receiving:
+ receiving:
 	c = READ();
 	switch (rx.status) {
 	case UART0_RX_COMMAND:
@@ -243,7 +243,7 @@ receiving:
 		return;
 	}
 
-complete:
+ complete:
 	rx.status = UART0_RX_IDLE;
 	pkg->valid = 1;
 	rx.current = current = 1 - current;

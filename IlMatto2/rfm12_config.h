@@ -45,7 +45,6 @@
 	nSEL            | Slave select pin defined below
 */
 
-
 //Pin that the RFM12's slave select is connected to
 #define DDR_SS DDRB
 #define PORT_SS PORTB
@@ -86,7 +85,7 @@
 /**** INTERRUPT VECTOR
  * define the interrupt vector settings here
  */
- 
+
 //the interrupt vector
 #define RFM12_INT_VECT (INT2_vect)
 
@@ -104,7 +103,6 @@
 
 //setup the interrupt to trigger on negative edge
 #define RFM12_INT_SETUP()   EICRA |= (1<<ISC21)
-
 
 /**** UART DEBUGGING
  * en- or disable debugging via uart.

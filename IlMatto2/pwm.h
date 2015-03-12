@@ -3,7 +3,10 @@
 
 #include <avr/io.h>
 
-static inline void pwm_set(const uint8_t d) {OCR2A = d;}
+static inline void pwm_set(const uint8_t d)
+{
+	OCR2A = d;
+}
 
 static inline void pwm_init(void)
 {
