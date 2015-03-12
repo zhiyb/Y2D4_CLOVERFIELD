@@ -78,7 +78,7 @@ private:
 
 	bool calibrated;
 	int32_t cal[7];
-	static int32_t EEMEM NVcal[sizeof(rTouch::cal) / sizeof(rTouch::cal[0])];
+	static int32_t EEMEM NVcal[7];
 
 	tft_t *tft;
 };
