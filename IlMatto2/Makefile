@@ -19,4 +19,4 @@ LFUSE	= 0xE7
 
 LOG	= ~/.make_avr.log
 
-include ../Makefile.in
+include ../Makefile.inc

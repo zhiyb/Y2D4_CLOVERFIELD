@@ -30,4 +30,4 @@ LFUSE	= 0xE7
 LOG	= ~/.make_avr.log
 
 include $(SUBDIRS:%=%/Makefile)
-include ../Makefile.in
+include ../Makefile.inc
