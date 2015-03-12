@@ -1,6 +1,6 @@
 # Modified by zhiyb (Yubo Zhi)
 
-PRG	= DAC
+PRG	= ADC_DAC_PWM
 SRC	= mainDADC.c dac.c adc.c
 LIB	= 
 LIBDIR	= ../lib
