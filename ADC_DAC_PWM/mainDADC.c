@@ -7,23 +7,23 @@
 #include "pwm.h"
 #include <ctype.h>
 
-volatile uint8_t val=0;
+volatile uint8_t val = 0;
 int main(void)
 {
 	init_dac();
-	initi_ADC(); 
+	initi_ADC();
 	adc_start();
 	pwm_init();
 	pwm_enable(1);
 	sei();
-	while(1){
+	while (1) {
 	}
 	return 1;
 }
 
 ISR(ADC_vect)
-	{
-		//val = ADCH;
-		set_dac(ADCH);
-		pwm_set(ADCH);
-	}
+{
+	//val = ADCH;
+	set_dac(ADCH);
+	pwm_set(ADCH);
+}

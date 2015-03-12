@@ -55,7 +55,7 @@ ISR(USART1_TX_vect, ISR_NOBLOCK)
 		return;
 	}
 	PORTD &= ~DAC_LOAD;	// Lowing DAC_LOAD to load
-	//_NOP();		// tW(LOAD) min. 250ns
+	//_NOP();               // tW(LOAD) min. 250ns
 	dac_tx_status = 0;
 	// Disable transmit complete interrupt
 	UCSR1B &= ~_BV(TXC1);

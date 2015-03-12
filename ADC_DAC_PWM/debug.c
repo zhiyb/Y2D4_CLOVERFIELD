@@ -1,29 +1,31 @@
 #include "debug.h"
 
-int uputchar0(char c, FILE *stream)
+int uputchar0(char c, FILE * stream)
 {
-	if (c == '\n') uputchar0('\r', stream);
-	while (!(UCSR0A & _BV(UDRE0)));
+	if (c == '\n')
+		uputchar0('\r', stream);
+	while (!(UCSR0A & _BV(UDRE0))) ;
 	UDR0 = c;
 	return c;
 }
 
-int ugetchar0(FILE *stream)
+int ugetchar0(FILE * stream)
 {
-	while(!(UCSR0A & _BV(RXC0)));
+	while (!(UCSR0A & _BV(RXC0))) ;
 	return UDR0;
 }
+
 char get_ch(void)
 {
-	while(!(UCSR0A & _BV(RXC0)));
+	while (!(UCSR0A & _BV(RXC0))) ;
 	return UDR0;
 }
 
 void init_debug_uart0(void)
 {
 	/* Configure UART0 baud rate, one start bit, 8-bit, no parity and one stop bit */
-	UBRR0H = (F_CPU/(DEBUG_BAUD*16L)-1) >> 8;
-	UBRR0L = (F_CPU/(DEBUG_BAUD*16L)-1);
+	UBRR0H = (F_CPU / (DEBUG_BAUD * 16L) - 1) >> 8;
+	UBRR0L = (F_CPU / (DEBUG_BAUD * 16L) - 1);
 	UCSR0B = _BV(RXEN0) | _BV(TXEN0);
 	UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
 

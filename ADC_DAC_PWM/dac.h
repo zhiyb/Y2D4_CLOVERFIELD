@@ -15,11 +15,10 @@ extern "C" {
 #define DAC_DATA	(1 << 3)
 #define DAC_CLK		(1 << 4)
 
-void init_dac(void);
-void set_dac(uint8_t data);
+	void init_dac(void);
+	void set_dac(uint8_t data);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

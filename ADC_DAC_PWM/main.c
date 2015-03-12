@@ -9,12 +9,12 @@ int main(void)
 	sei();
 
 	uint8_t dac = 0;
-inc:
+ inc:
 	set_dac(dac);
 	_delay_ms(10);
 	if (++dac != 255)
 		goto inc;
-dec:
+ dec:
 	set_dac(dac);
 	_delay_ms(10);
 	if (--dac != 0)

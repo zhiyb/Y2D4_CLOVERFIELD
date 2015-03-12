@@ -9,11 +9,11 @@ int main(void)
 {
 	init_dac();
 	init_debug_uart0();
-	init_adc(); 
+	init_adc();
 	adc_start();
 	sei();
 	char ch;
-	while(1){
+	while (1) {
 		ch = get_ch();
 		set_dac(ch);
 	}
