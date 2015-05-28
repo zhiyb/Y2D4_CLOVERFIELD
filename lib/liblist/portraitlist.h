@@ -24,7 +24,7 @@ public:
 	bool scrollUp(uint16_t s);
 	bool scrollDown(uint16_t s);
 	uint16_t count(void) const {return cnt;}
-	// Un-transformed coordinate
+	// Not transformed coordinate
 	void clickOn(uint16_t x, uint16_t y);
 	void toUpperLevel(void);
 	void activate(uint16_t index) {activate(*itemsAt(index), true);}

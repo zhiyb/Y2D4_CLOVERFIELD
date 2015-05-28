@@ -1,22 +1,15 @@
 # Modified by zhiyb (Yubo Zhi)
 
-PRG	= UTRX
+TRG	= UTRX
 SRC	= rfm12.c adc.c timer.c uart0.c testaudioTRX_FINAL.c
-LIB	= 
-VERSION	= 0.0.1
+INCDIRS	+= . ../inc
 
 PRGER	= usbasp
 MCU_TARGET	= atmega644p
-OPTIMIZE	= -Os
-
-DEFS	+= -DF_CPU=12000000
-LIBS	+=
-INCS	+= -I. -I../inc
+MCU_FREQ	= 12000000
 
 EFUSE	= 0xFF
 HFUSE	= 0x9C
 LFUSE	= 0xE7
 
-LOG	= ~/.make_avr.log
-
-include ../Makefile.inc
+include ../Makefile_AVR.defs

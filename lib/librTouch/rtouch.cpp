@@ -57,7 +57,7 @@ void rTouch::init(void)
 	pcint_enable(RTOUCH_PCMSK);
 	adc_register_ISR(rTouchADCISR);
 
-	// Power-up pressed detection
+	// First pressed detection
 	if (RTOUCH_DETECT()) {
 		pcint_disable(RTOUCH_PCMSK);
 		rTouchMode(ReadY);
@@ -228,6 +228,12 @@ static inline void rTouchMode(Functions func)
 		DIDR0 |= RTOUCH_YP;
 		break;
 	case ReadY:
+#ifdef RTOUCH_SAFE
+		RTOUCH_DDRM &= ~RTOUCH_XM;
+		RTOUCH_DDRM |= RTOUCH_YM;
+		RTOUCH_PORTM &= ~(RTOUCH_XM | RTOUCH_YM);
+		RTOUCH_DDRP &= ~RTOUCH_XP;
+#endif
 		RTOUCH_DDRP |= RTOUCH_YP;
 		RTOUCH_PORTP &= ~RTOUCH_XP;
 		RTOUCH_PORTP |= RTOUCH_YP;
@@ -237,6 +243,9 @@ static inline void rTouchMode(Functions func)
 	case ReadX:
 		RTOUCH_DDRM |= RTOUCH_XM;
 		RTOUCH_DDRM &= ~RTOUCH_YM;
+#ifdef RTOUCH_SAFE
+		RTOUCH_PORTM &= ~(RTOUCH_XM | RTOUCH_YM);
+#endif
 		RTOUCH_DDRP |= RTOUCH_XP;
 		RTOUCH_DDRP &= ~RTOUCH_YP;
 		RTOUCH_PORTP |= RTOUCH_XP;
@@ -272,6 +281,7 @@ static bool rTouchAverager(uint16_t x, uint16_t y)
 // Detection -> ReadY -> ReadX -> Detection
 static void rTouchADCISR(uint8_t channel, uint16_t result)
 {
+	//PINB |= _BV(7);
 	if (channel == RTOUCH_YC) {
 		ts.postmp.y = result;
 		rTouchMode(ReadX);

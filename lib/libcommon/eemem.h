@@ -11,7 +11,7 @@ extern "C" {
 
 #include <avr/eeprom.h>
 
-#define EE_INIT_SPEC	0xAA			// First run sign
+#define EE_INIT_PATTERN	0xAA		// First run sign
 
 uint8_t eeprom_first(void);
 void eeprom_first_done(void);

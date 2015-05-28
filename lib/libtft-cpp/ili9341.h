@@ -8,14 +8,26 @@
 #include "connection.h"
 
 #include <avr/io.h>
-#include <util/delay.h>
 #define _NOP() __asm__ __volatile__("nop")
+#include <util/delay.h>
+
+#define TFT_CONCAT(a,b)		a ## b
+#define TFT_CONCAT_E(a,b)	TFT_CONCAT(a, b)
+
+#define TFT_PCTRL	TFT_CONCAT_E(DDR, TFT_PORT_CTRL)
+#define TFT_WCTRL	TFT_CONCAT_E(PORT, TFT_PORT_CTRL)
+#define TFT_RCTRL	TFT_CONCAT_E(PIN, TFT_PORT_CTRL)
+#define TFT_PDATA	TFT_CONCAT_E(DDR, TFT_PORT_DATA)
+#define TFT_WDATA	TFT_CONCAT_E(PORT, TFT_PORT_DATA)
+#define TFT_RDATA	TFT_CONCAT_E(PIN, TFT_PORT_DATA)
 
 class ili9341
 {
 public:
 	enum Orientation {Landscape = 0, Portrait, \
-		FlipLandscape, FlipPortrait};
+		FlipLandscape, FlipPortrait, \
+		BMPLandscape, BMPPortrait, \
+		BMPFlipLandscape, BMPFlipPortrait};
 
 	static inline void init(void);
 	static inline void idle(bool e) {cmd(0x38 + e);}
@@ -106,8 +118,13 @@ inline void ili9341::_setBGLight(bool ctrl)
 
 inline void ili9341::init(void)
 {
-	MCUCR |= 0x80;			// Disable JTAG
-	MCUCR |= 0x80;
+	uint8_t c;
+	uint16_t r;
+
+	if (TFT_WCTRL == PORTC || TFT_WDATA == PORTC) {
+		MCUCR |= 0x80;			// Disable JTAG
+		MCUCR |= 0x80;
+	}
 
 	TFT_PCTRL = 0xFF & ~TFT_FMK;
 	TFT_WCTRL = 0xFF & ~TFT_BLC;	// Disable background light
@@ -133,7 +150,17 @@ inline void ili9341::init(void)
 	data(0x55);		// 16 bits/pixel
 	cmd(0x36);		// Memory Access Control
 	data(0x48);		// Column Adress Order, BGR
+	cmd(0x2C);		// Memory Write
+	for (r = 0; r < 320; r++)	// Black screen
+		for (c = 0; c < 240; c++) {
+			data(0x00);
+			data(0x00);
+			data(0x00);
+		}
 	cmd(0xB1);		// Frame Rate control, normal
+	data(0x00);		// Faster
+	data(0x18);
+	cmd(0xB3);		// Frame Rate control, partial
 	data(0x00);		// Faster
 	data(0x18);
 	cmd(0x29);		// Display On

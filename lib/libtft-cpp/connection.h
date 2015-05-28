@@ -7,12 +7,12 @@
 
 // 8-bit parallel interface I
 
-#define TFT_PCTRL	DDRA
-#define TFT_WCTRL	PORTA
-#define TFT_RCTRL	PINA
-#define TFT_PDATA	DDRC
-#define TFT_WDATA	PORTC
-#define TFT_RDATA	PINC
+#ifndef TFT_PORT_CTRL
+#define TFT_PORT_CTRL	A
+#endif
+#ifndef TFT_PORT_DATA
+#define TFT_PORT_DATA	C
+#endif
 
 #define TFT_CS	(1 << 0)	// Chip-select (0)
 #define TFT_BLC	(1 << 1)	// Background light control (0)

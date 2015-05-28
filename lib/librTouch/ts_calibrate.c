@@ -60,6 +60,12 @@ uint8_t perform_calibration(calibration *cal)
 	cal->a[1] = (int32_t)((b*z + e*zx + f*zy)*(scaling));
 	cal->a[2] = (int32_t)((c*z + f*zx + i*zy)*(scaling));
 
+#if 0
+	printf("%f %f %f\n",(a*z + b*zx + c*zy),
+				(b*z + e*zx + f*zy),
+				(c*z + f*zx + i*zy));
+#endif
+
 // Get sums for y calibration
 	z = zx = zy = 0;
 	for(j=0;j<5;j++) {
@@ -73,7 +79,21 @@ uint8_t perform_calibration(calibration *cal)
 	cal->a[4] = (int32_t)((b*z + e*zx + f*zy)*(scaling));
 	cal->a[5] = (int32_t)((c*z + f*zx + i*zy)*(scaling));
 
+#if 0
+	printf("%f %f %f\n",(a*z + b*zx + c*zy),
+				(b*z + e*zx + f*zy),
+				(c*z + f*zx + i*zy));
+#endif
+
 // If we got here, we're OK, so assign scaling to a[6] and return
 	cal->a[6] = (int32_t)scaling;
 	return 1;
+/*
+// This code was here originally to just insert default values
+	for(j=0;j<7;j++) {
+		c->a[j]=0;
+	}
+	c->a[1] = c->a[5] = c->a[6] = 1;
+	return 1;
+*/
 }

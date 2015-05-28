@@ -273,6 +273,12 @@ void PortraitList::pool(rTouch *touch)
 		pressed = false;
 		break;
 	}
+#ifdef DEBUG
+	using namespace colours::b16;
+	tft->rectangle(0, tft->topEdge() - 1, tft->width(), 1, White);
+	tft->rectangle(0, tft->bottomEdge(), tft->width(), 1, White);
+	tft->rectangle(0, tft->bottomEdge() - 1, tft->width(), 1, Black);
+#endif
 	prev.x = pos.x;
 	prev.y = pos.y;
 }
